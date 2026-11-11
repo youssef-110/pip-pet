@@ -10,6 +10,7 @@ const LABEL = { working: 'working', done: 'done', needs: 'needs you', error: 'er
 
 function render() {
   const { settings: st, bubble: b, sessions: list } = S;
+  document.documentElement.style.setProperty('--pet', { s: '112px', m: '150px', l: '200px' }[st.size] || '150px');
   const key = st.char + '/' + st.acc;
   if (char !== key) { PipPet.mount(petEl, { char: st.char, skin: st.skin, acc: st.acc }); char = key; }
   PipPet.skin(petEl, st.skin);

@@ -16,12 +16,15 @@ a session is done, or when Claude is waiting on you.
 - **Done**: Pip hops, chimes, and shows the project name and the last line Claude wrote.
 - **Needs you**: on a permission prompt or a question, Pip waves until you come back.
 - **All sessions**: one dot per running session. Hover to see what each one is doing.
+- **Yours**: three sizes, sound on or off, start with Windows, and an update notice when a new version is out.
 - **Out of the way**: Pip hides when you go fullscreen and only pops up when a session is done or needs you.
 - **Works with a Claude subscription and with an API key**, because it listens to Claude Code hooks, not to your account.
 
 ## Characters
 
-14 characters, 12 colours and 6 things to wear. Some are cute (Pip, Mochi, Boo, Bit, Lotl, Fig, Bun, Nori) and some are not: Nyx the chrome-armed merc, Kage the ninja, Titan the mech, Vale the knight, Orbit the astronaut, and Spark, a blocky critter inspired by Claude Code.
+16 characters, 13 colours and 6 things to wear. Some are cute (Pip, Mochi, Boo, Bit, Lotl, Fig, Bun, Nori) and some are not: Nyx the chrome-armed street kid, Kage the ninja, Titan the mech, Vale the knight, Orbit the astronaut, Grim the reaper, Blaze the dragon, and Spark, a pixel critter in the spirit of the Claude Code mascot.
+
+Spark and Nyx are fan tributes drawn for this project. They are not official artwork of Anthropic or of any game or show.
 
 Open Pip from the Start menu or the tray icon to choose. Launching Pip opens its app window, where you pick a character, watch your sessions live and change settings.
 
@@ -36,7 +39,7 @@ Pip is an Electron overlay window. On first launch it adds a few `type: "http"` 
 Claude Code then posts session events to `http://127.0.0.1:47821/hook`. Nothing leaves your machine.
 
 Hooks used: `UserPromptSubmit`, `PostToolUse`, `PermissionRequest`, `Notification`, `Stop`,
-`StopFailure`, `SessionEnd`. Remove them any time from Pip's menu: **Claude Code hooks > Remove**.
+`StopFailure`, `SessionEnd`. Remove them any time in **Settings > Remove hooks**. Uninstalling Pip removes them too.
 
 ## Run from source
 

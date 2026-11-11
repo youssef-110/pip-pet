@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { apply, mood, bubble } = require('./sessions');
+const { apply, mood, bubble, newer } = require('./sessions');
 const { withHooks, withoutHooks, EVENTS } = require('./hooks');
 
 const ev = (name, extra = {}) => ({ session_id: 'a', cwd: 'C:\\Users\\me\\api-server', hook_event_name: name, ...extra });
@@ -29,6 +29,12 @@ test('session lifecycle', () => {
   apply(m, ev('SessionEnd'));
   assert.equal(mood([...m.values()]), 'sleep');
   assert.equal(apply(m, { hook_event_name: 'Stop' }), null, 'no session id');
+});
+
+test('version comparison', () => {
+  assert.equal(newer('1.10.0', '1.9.3'), true);
+  assert.equal(newer('1.2.0', '1.2.0'), false);
+  assert.equal(newer('1.1.9', '1.2.0'), false);
 });
 
 test('needs outranks done across sessions', () => {

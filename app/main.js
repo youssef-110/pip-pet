@@ -9,9 +9,12 @@ const { CHARS, SKINS, ACCS } = require('./renderer/pet.js');
 
 const W = 300, H = 340, DONE_MS = 20000;
 const map = new Map();
-let hooksOk = false;
+let hooksOk = false, latest = null;
 let win, ui, tray, watcher, settings, fullscreen = false, shown = false, hideTimer, dragOff, hookNote = '';
 const ackTimers = new Map();
+
+// Called by the uninstaller: take our hooks out of Claude Code's settings and leave.
+if (process.argv.includes('--uninstall-hooks')) { try { hooks.uninstall(); } catch {} app.exit(0); }
 
 // A second copy must do nothing except hand over to the first one, which then opens the app window.
 const primary = app.requestSingleInstanceLock();
@@ -22,12 +25,12 @@ const settingsFile = () => path.join(app.getPath('userData'), 'settings.json');
 function loadSettings() {
   let s = {};
   try { s = JSON.parse(fs.readFileSync(settingsFile(), 'utf8')); } catch {}
-  return { char: 'blob', skin: 'coral', acc: 'none', mode: 'auto', sound: true, ...s };
+  return { char: 'blob', skin: 'coral', acc: 'none', size: 'm', mode: 'auto', sound: true, ...s };
 }
 // Settings arrive from the app window, so only known keys with known values are accepted.
 const ALLOWED = {
   char: CHARS.map((c) => c.id), skin: SKINS.map((s) => s.id), acc: ACCS.map((a) => a.id),
-  mode: ['always', 'auto', 'shy'], sound: [true, false],
+  mode: ['always', 'auto', 'shy'], sound: [true, false], size: ['s', 'm', 'l'],
 };
 function save(patch) {
   for (const k of Object.keys(patch)) if (k !== 'pos' && !(ALLOWED[k] || []).includes(patch[k])) delete patch[k];
@@ -39,7 +42,14 @@ function save(patch) {
 // ---- state -> renderer ----
 function emit() {
   const list = [...map.values()];
-  const info = { version: app.getVersion(), login: app.getLoginItemSettings().openAtLogin, hooks: hooksOk };
+  const info = { version: app.getVersion(), login: app.getLoginItemSettings().openAtLogin, hooks: hooksOk, latest };
+  if (tray) {
+    const n = (st) => list.filter((s) => s.state === st).length, parts = [];
+    if (n('working')) parts.push(`${n('working')} working`);
+    if (n('done')) parts.push(`${n('done')} done`);
+    if (n('needs') + n('error')) parts.push(`${n('needs') + n('error')} need you`);
+    tray.setToolTip(parts.length ? 'Pip: ' + parts.join(', ') : 'Pip');
+  }
   const state = { sessions: list, mood: sessions.mood(list), bubble: sessions.bubble(list), settings, note: hookNote, info };
   for (const w of [win, ui]) if (w && !w.isDestroyed()) w.webContents.send('state', state);
   updateVisibility(list);
@@ -117,6 +127,7 @@ function buildMenu() {
     { label: 'Character', submenu: radio('char', CHARS) },
     { label: 'Colour', submenu: radio('skin', SKINS) },
     { label: 'Wearing', submenu: radio('acc', ACCS) },
+    { label: 'Size', submenu: radio('size', [{ id: 's', name: 'Small' }, { id: 'm', name: 'Medium' }, { id: 'l', name: 'Large' }]) },
     { label: 'Show', submenu: radio('mode', [
       { id: 'always', name: 'Always' },
       { id: 'auto', name: 'Hide while I am in fullscreen' },
@@ -155,6 +166,16 @@ function removeHooks() {
 // --hidden keeps the app window closed when Windows starts Pip at login
 function setLogin(on) { app.setLoginItemSettings({ openAtLogin: !!on, args: ['--hidden'] }); buildMenu(); emit(); }
 
+// ---- update check: asks GitHub for the newest release tag, nothing about you is sent ----
+async function checkUpdate() {
+  try {
+    const r = await fetch('https://api.github.com/repos/youssef-110/pip-pet/releases/latest', { headers: { accept: 'application/vnd.github+json', 'user-agent': 'pip-desk-pet' } });
+    const tag = String((await r.json()).tag_name || '').replace(/^v/, '');
+    latest = /^\d+\.\d+\.\d+$/.test(tag) && sessions.newer(tag, app.getVersion()) ? tag : null;
+    emit();
+  } catch {}
+}
+
 // ---- app window: pick a character, watch sessions, change settings ----
 function showUi() {
   if (ui && !ui.isDestroyed()) { if (ui.isMinimized()) ui.restore(); ui.show(); ui.focus(); return; }
@@ -166,7 +187,10 @@ function showUi() {
   ui.loadFile(path.join(__dirname, 'renderer', 'ui.html'));
   ui.on('closed', () => { ui = null; });
   // dev only: PIP_SHOT=<file.png> saves a screenshot of the app window for the README
-  if (process.env.PIP_SHOT) ui.webContents.once('did-finish-load', () => setTimeout(async () => fs.writeFileSync(process.env.PIP_SHOT, (await ui.webContents.capturePage()).toPNG()), 2500));
+  if (process.env.PIP_SHOT) ui.webContents.once('did-finish-load', () => setTimeout(async () => {
+    if (process.env.PIP_TAB) await ui.webContents.executeJavaScript(`document.querySelector('[data-tab=${JSON.stringify(process.env.PIP_TAB)}]').click()`);
+    setTimeout(async () => fs.writeFileSync(process.env.PIP_SHOT, (await ui.webContents.capturePage()).toPNG()), 600);
+  }, 2500));
 }
 
 // ---- pet window ----
@@ -217,6 +241,8 @@ app.whenReady().then(() => {
   startServer();
   startWatcher();
   if (!process.argv.includes('--hidden')) showUi();
+  checkUpdate();
+  setInterval(checkUpdate, 6 * 60 * 60 * 1000);
 });
 // Launching Pip again opens the app window instead of silently doing nothing.
 app.on('second-instance', () => { if (app.isReady()) showUi(); });

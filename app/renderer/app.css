@@ -1,16 +1,17 @@
-html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; user-select: none; font: 13px/1.35 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; color: #2b2320; }
+@font-face { font-family: 'Figtree'; src: url('fonts/figtree.woff2') format('woff2'); font-weight: 400 700; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; user-select: none; font: 13.5px/1.35 'Figtree', 'Segoe UI', system-ui, sans-serif; color: #221a28; }
 #stage { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 6px; box-sizing: border-box;
   opacity: 0; transform: translateY(46px) scale(.9); transform-origin: 50% 100%; transition: opacity .22s ease, transform .3s cubic-bezier(.5, 0, .8, .4); }
 #stage.in { opacity: 1; transform: none; transition: opacity .2s ease, transform .5s cubic-bezier(.2, 1.5, .4, 1); }
-#pet { width: 150px; height: 150px; cursor: grab; flex: none; }
+#pet { width: var(--pet, 150px); height: var(--pet, 150px); transition: width .25s cubic-bezier(.22, 1, .36, 1), height .25s cubic-bezier(.22, 1, .36, 1); cursor: grab; flex: none; }
 #pet:active { cursor: grabbing; }
 
-#bubble { max-width: 252px; margin-bottom: 4px; padding: 10px 14px 11px; background: #fffaf2; border-radius: 16px; box-shadow: 0 6px 22px rgba(43, 35, 32, .2), 0 0 0 1px rgba(43, 35, 32, .08);
+#bubble { max-width: 252px; margin-bottom: 4px; padding: 10px 14px 11px; background: #fff; border-radius: 18px; box-shadow: 0 4px 0 rgba(34, 26, 40, .12), 0 10px 26px rgba(34, 26, 40, .2);
   position: relative; cursor: pointer; animation: pop .36s cubic-bezier(.2, 1.5, .4, 1); transform-origin: 50% 100%; }
-#bubble::after { content: ''; position: absolute; left: 50%; bottom: -6px; width: 13px; height: 13px; margin-left: -6px; background: #fffaf2; transform: rotate(45deg); border-radius: 0 0 3px 0; box-shadow: 1px 1px 0 rgba(43, 35, 32, .08); }
+#bubble::after { content: ''; position: absolute; left: 50%; bottom: -6px; width: 13px; height: 13px; margin-left: -6px; background: #fff; transform: rotate(45deg); border-radius: 0 0 3px 0; }
 #bubble[hidden] { display: none; }
-#bubble b { display: block; font-size: 14px; font-weight: 650; overflow-wrap: anywhere; }
-#bubble span { display: block; color: #6f635a; overflow-wrap: anywhere; }
+#bubble b { display: block; font-size: 14.5px; font-weight: 700; overflow-wrap: anywhere; }
+#bubble span { display: block; color: rgba(34, 26, 40, .76); overflow-wrap: anywhere; }
 #bubble .row { display: flex; gap: 8px; align-items: baseline; justify-content: space-between; white-space: nowrap; }
 #bubble .row i { font-style: normal; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
 #bubble .row span { flex: none; font-size: 12px; }

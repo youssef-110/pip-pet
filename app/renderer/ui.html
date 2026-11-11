@@ -15,6 +15,7 @@
     <button role="tab" data-tab="sessions" aria-selected="false">Sessions <span class="count" id="count"></span></button>
     <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
   </div>
+  <button class="update" id="update" data-open="releases" hidden></button>
   <span class="version" id="version"></span>
 </header>
 
@@ -59,6 +60,12 @@
         <button data-id="always">Always</button>
         <button data-id="auto">Hide in fullscreen</button>
         <button data-id="shy">Only when done or needed</button>
+      </div>
+      <h2>Size on your desktop</h2>
+      <div class="chips" id="sizes" role="group" aria-label="Size">
+        <button data-id="s">Small</button>
+        <button data-id="m">Medium</button>
+        <button data-id="l">Large</button>
       </div>
       <div class="switch-row"><span>Sound when a session is done or needs you</span><button class="switch" id="sound" role="switch" aria-label="Sound"></button></div>
       <div class="switch-row"><span>Start Pip when Windows starts</span><button class="switch" id="login" role="switch" aria-label="Start with Windows"></button></div>

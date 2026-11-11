@@ -41,10 +41,13 @@
 .pip[data-mouth="glow"] .m-open, .pip[data-mouth="glow"] .m-o { fill: var(--glow, #b9f0ff); }
 .pip[data-mouth="glow"] .m-smile { stroke: var(--glow, #b9f0ff); }
 .pip[data-mouth="none"] .m-smile, .pip[data-mouth="none"] .m-open, .pip[data-mouth="none"] .m-o { display: none !important; }
-.pip[data-char="nyx"], .pip[data-char="titan"], .pip[data-char="vale"] { --glow: var(--accent); }
-.pip[data-char="nyx"] .m-smile { stroke: #261c2c; } .pip[data-char="nyx"] .m-open, .pip[data-char="nyx"] .m-o { fill: #261c2c; }
-.pip[data-char="kage"] .eye-open { fill: #261c2c; } .pip[data-char="kage"] .glint { fill: #fff; }
-.pip[data-char="kage"] .eye-happy, .pip[data-char="kage"] .eye-shut { stroke: #261c2c; }
+.pip[data-char="titan"], .pip[data-char="vale"] { --glow: var(--accent); }
+/* faces drawn on a fixed light surface (skin, skull) keep dark features on every colour */
+.pip[data-face="dark"] .eye-open, .pip[data-face="dark"] .m-open, .pip[data-face="dark"] .m-o { fill: #261c2c; }
+.pip[data-face="dark"] .glint { fill: #fff; }
+.pip[data-face="dark"] .eye-happy, .pip[data-face="dark"] .eye-shut, .pip[data-face="dark"] .m-smile { stroke: #261c2c; }
+.pip[data-char="spark"] .glint, .pip[data-char="spark"] .gloss, .pip[data-char="grim"] .glint { display: none; }
+.pip[data-char="spark"] .arm { transform-origin: 50% 50%; }
 .pip .brow { fill: none; stroke: #261c2c; stroke-width: 4; stroke-linecap: round; }
 .pip .chrome { fill: #b4bac8; }
 .pip .scarf { stroke-width: 9; }
@@ -135,13 +138,13 @@
 @keyframes pip-tap-l { from { transform: translate(27px, 13px); } to { transform: translate(27px, 4px); } }
 @keyframes pip-tap-r { from { transform: translate(-27px, 13px); } to { transform: translate(-27px, 4px); } }
 @keyframes pip-hop { 0%, 100% { transform: scale(1.08, .9); } 18% { transform: scale(.94, 1.08) translateY(-6px); } 48% { transform: scale(1, 1) translateY(-26px); } 82% { transform: scale(.96, 1.05) translateY(-4px); } }
-@keyframes pip-spark { 0% { transform: scale(0) rotate(0); opacity: 0; } 30% { transform: scale(1.2) rotate(40deg); opacity: 1; } 100% { transform: scale(0) rotate(120deg); opacity: 0; } }
+@keyframes pip-spark { 0% { transform: scale(.2) rotate(0); opacity: 0; } 30% { transform: scale(1.2) rotate(40deg); opacity: 1; } 100% { transform: scale(.2) rotate(120deg); opacity: 0; } }
 @keyframes pip-tilt { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
 @keyframes pip-bang { from { transform: translateY(0) scale(1); } to { transform: translateY(-9px) scale(1.08); } }
 @keyframes pip-wave { from { transform: translate(8px, -34px) rotate(8deg); } to { transform: translate(8px, -34px) rotate(42deg); } }
 @keyframes pip-zzz { 0% { opacity: 0; transform: translate(-6px, 8px); } 40% { opacity: 1; } 100% { opacity: 0; transform: translate(8px, -12px); } }
 @keyframes pip-squish { 0% { transform: scale(1, 1); } 25% { transform: scale(1.16, .8); } 60% { transform: scale(.95, 1.07); } 100% { transform: scale(1, 1); } }
-@keyframes pip-heart { 0% { transform: translateY(14px) scale(0); opacity: 0; } 35% { transform: translateY(0) scale(1.25); opacity: 1; } 100% { transform: translateY(-26px) scale(.8); opacity: 0; } }
+@keyframes pip-heart { 0% { transform: translateY(14px) scale(.2); opacity: 0; } 35% { transform: translateY(0) scale(1.25); opacity: 1; } 100% { transform: translateY(-26px) scale(.8); opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   .pip *, .petted .pip * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }

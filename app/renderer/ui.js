@@ -46,7 +46,9 @@ function render() {
     press($('swatches'), st.skin); press($('accs'), st.acc);
     theme(st.skin);
   }
-  press($('modes'), st.mode);
+  press($('modes'), st.mode); press($('sizes'), st.size);
+  $('update').hidden = !S.info.latest;
+  if (S.info.latest) $('update').textContent = `Update to ${S.info.latest}`;
   $('sound').setAttribute('aria-checked', !!st.sound);
   $('login').setAttribute('aria-checked', !!S.info.login);
   $('version').textContent = 'Version ' + S.info.version;
@@ -75,6 +77,7 @@ $('tabs').addEventListener('click', (e) => {
   const t = e.target.closest('button'); if (!t) return;
   for (const b of $('tabs').children) b.setAttribute('aria-selected', b === t);
   for (const id of ['pet', 'sessions', 'settings']) $('tab-' + id).hidden = id !== t.dataset.tab;
+  document.querySelector('.panels').scrollTop = 0;
 });
 $('moods').addEventListener('click', (e) => {
   const b = e.target.closest('button'); if (!b) return;
@@ -82,6 +85,7 @@ $('moods').addEventListener('click', (e) => {
   for (const x of $('moods').children) x.setAttribute('aria-pressed', x === b);
 });
 $('modes').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) pip.save({ mode: b.dataset.id }); });
+$('sizes').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) pip.save({ size: b.dataset.id }); });
 $('sound').addEventListener('click', () => pip.save({ sound: !S.settings.sound }));
 $('login').addEventListener('click', () => pip.login(!S.info.login));
 $('hooks-install').addEventListener('click', () => pip.hooks('install'));

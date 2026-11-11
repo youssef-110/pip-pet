@@ -55,4 +55,11 @@ function bubble(list) {
   return u[0] || null;
 }
 
-module.exports = { apply, prune, mood, bubble, unacked };
+// true when version a is newer than version b ("1.10.0" beats "1.9.3")
+function newer(a, b) {
+  const x = a.split('.').map(Number), y = b.split('.').map(Number);
+  for (let i = 0; i < 3; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0);
+  return false;
+}
+
+module.exports = { newer, apply, prune, mood, bubble, unacked };

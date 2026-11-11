@@ -1,6 +1,6 @@
 {
   "name": "pip-pet",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A tiny desk pet that watches your Claude Code sessions",
   "author": "Pip",
   "license": "MIT",
@@ -27,6 +27,7 @@
       "target": "nsis"
     },
     "nsis": {
+      "include": "build/installer.nsh",
       "oneClick": true,
       "artifactName": "Pip-Setup.${ext}"
     }

@@ -87,10 +87,10 @@ code { font: .86em ui-monospace, 'Cascadia Code', Consolas, monospace; backgroun
 
 /* characters */
 .cast { background: var(--ground-2); padding: 120px 0 130px; }
-.shelf { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); row-gap: 30px; align-items: end; margin-top: 70px; }
+.shelf { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); row-gap: 30px; align-items: end; margin-top: 70px; }
 .slot { position: relative; }
-.slot::after { content: ''; position: absolute; left: 0; right: 0; bottom: calc(9.5% - 13px); height: 14px; background: var(--paper); box-shadow: 0 6px 0 rgba(34, 26, 40, .1); }
-.slot:nth-child(7n+1)::after { border-radius: 7px 0 0 7px; } .slot:nth-child(7n)::after { border-radius: 0 7px 7px 0; }
+.slot::after { content: ''; position: absolute; left: -1px; right: -1px; bottom: calc(9.5% - 13px); height: 14px; background: var(--paper); box-shadow: 0 6px 0 rgba(34, 26, 40, .1); }
+.slot:nth-child(8n+1)::after { border-radius: 7px 0 0 7px; left: 0; } .slot:nth-child(8n)::after { border-radius: 0 7px 7px 0; right: 0; }
 .shelf .pet { z-index: 1; }
 .shelf .pet { transform: scale(.86); transform-origin: 50% 92%; transition: transform .45s var(--spring), opacity .5s ease; }
 .shelf .pet:hover { transform: scale(.94) translateY(-3%); }

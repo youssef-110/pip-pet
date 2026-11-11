@@ -2,6 +2,7 @@
 (function (root) {
   const SKINS = [
     { id: 'coral', name: 'Coral', body: '#F0765A', accent: '#58B274' },
+    { id: 'clay', name: 'Terracotta', body: '#D97757', accent: '#F4F0E8' },
     { id: 'red', name: 'Red', body: '#E3263F', accent: '#FFC94A' },
     { id: 'tangerine', name: 'Tangerine', body: '#FF9A3D', accent: '#3FA7D6' },
     { id: 'butter', name: 'Butter', body: '#F8CE55', accent: '#F0765A' },
@@ -73,24 +74,24 @@
       front: () => `<ellipse class="belly" cx="100" cy="150" rx="34" ry="20"/>`,
     },
     {
-      id: 'spark', name: 'Spark', blurb: 'A blocky terminal critter inspired by Claude Code. A fan tribute, not the official mascot.',
-      top: 62, hw: 58, face: { ey: 100, dx: 25, my: 120, sq: true, cheek: false }, gloss: [64, 73, 15, 4, 0], feet: false,
-      back: (B, A) => `<rect class="deep" x="52" y="146" width="15" height="31" rx="3"/><rect class="deep" x="76" y="146" width="15" height="31" rx="3"/><rect class="deep" x="109" y="146" width="15" height="31" rx="3"/><rect class="deep" x="133" y="146" width="15" height="31" rx="3"/>
-        <g class="antenna"><path class="stem" d="M100 64V52"/><g transform="translate(100 40)"><path fill="${A}" d="${SPARK8}"/></g></g>`,
-      body: (B) => `<rect fill="${B}" x="42" y="62" width="116" height="92" rx="9"/>`,
-      arms: '<rect class="arm arm-l" x="27" y="98" width="19" height="27" rx="4"/><rect class="arm arm-r" x="154" y="98" width="19" height="27" rx="4"/>',
+      id: 'spark', name: 'Spark', blurb: 'A pixel critter in the spirit of the Claude Code mascot. A fan tribute, not the official one.',
+      top: 66, hw: 60, face: { ey: 98, dx: 24, sq: true, cheek: false }, gloss: [0, 0, 0, 0, 0], feet: false, mouth: 'none',
+      back: () => `<rect class="deep" x="50" y="144" width="14" height="32"/><rect class="deep" x="74" y="144" width="14" height="32"/><rect class="deep" x="112" y="144" width="14" height="32"/><rect class="deep" x="136" y="144" width="14" height="32"/>`,
+      body: (B) => `<rect fill="${B}" x="40" y="66" width="120" height="84" rx="2"/>`,
+      arms: '<rect class="arm arm-l" x="22" y="100" width="20" height="20"/><rect class="arm arm-r" x="158" y="100" width="20" height="20"/>',
     },
     fig({
-      id: 'nyx', name: 'Nyx', blurb: 'A chrome-armed merc from the neon city. A nod to cyberpunk, with zero patience for slow builds.',
-      glow: true, face: { my: 91 },
-      body: (B, A) => `${FIG.legs}${FIG.torso(B)}<path class="deep" d="M88 96l12 20 12-20z"/><path d="M82 118v30" stroke="${A}" stroke-width="3.5" stroke-linecap="round"/>
-        <path class="tuft" fill="${A}" d="M82 34L88 8L97 26L103 2L110 26L119 10L120 34Z"/>${FIG.head('#f1c5a6')}<path class="deep" d="M58 56q0 -28 28 -28h28q28 0 28 28v-6q-42 -16 -84 0z"/>`,
-      front: (B, A) => `<rect x="60" y="55" width="80" height="25" rx="10" fill="#15121d"/><path d="M66 78h68" stroke="${A}" stroke-width="2.6" stroke-linecap="round"/>`,
-      arms: '<rect class="arm arm-l" x="54" y="101" width="17" height="47" rx="8.5"/><g class="arm arm-r"><rect class="chrome" x="129" y="101" width="17" height="47" rx="6"/><path d="M129 116h17M129 131h17" stroke="#5d6373" stroke-width="2.2"/><circle class="bulb" cx="137.5" cy="108" r="3" fill="var(--accent)"/></g>',
+      id: 'nyx', name: 'Nyx', blurb: 'A street kid from the neon city: chrome arms, a jacket two sizes too big. A fan nod to cyberpunk.',
+      dark: true, face: { my: 91, brow: true },
+      body: (B, A) => `${FIG.legs}${FIG.torso(B)}<path fill="#1b1722" d="M86 96h28l-14 26z"/><rect x="70" y="124" width="60" height="7" fill="${A}"/>
+        <path fill="${B}" d="M66 104l-2 -24 24 16z"/><path fill="${B}" d="M134 104l2 -24 -24 16z"/>
+        ${FIG.head('#f1c5a6')}<path fill="#2a2230" d="M57 62q-4 -36 30 -38q11 -9 24 -2q34 2 32 40q-9 -19 -25 -17l-6 11l-8 -11l-10 11l-10 -11q-15 0 -27 17z"/>
+        <path d="M67 80v9M133 80v9" stroke="${A}" stroke-width="2.6" stroke-linecap="round"/>`,
+      arms: ['l', 'r'].map((k) => { const x = k === 'l' ? 54 : 129; return `<g class="arm arm-${k}"><rect x="${x}" y="101" width="17" height="26" rx="8"/><rect class="chrome" x="${x + 1}" y="123" width="15" height="25" rx="6"/><path d="M${x + 1} 134h15" stroke="#5d6373" stroke-width="2"/></g>`; }).join(''),
     }),
     fig({
       id: 'kage', name: 'Kage', blurb: 'A ninja. You will not hear it arrive, only the chime when your session is done.',
-      mouth: 'none', face: { brow: true },
+      dark: true, mouth: 'none', face: { brow: true },
       back: (B, A) => `<path d="M136 34L64 150" stroke="#8a8f9c" stroke-width="5" stroke-linecap="round"/><path d="M136 34l8 -13" stroke="#261c2c" stroke-width="7" stroke-linecap="round"/>
         <path class="tail scarf" d="M124 100q30 4 44 -14" stroke="${A}"/>`,
       body: (B, A) => `${FIG.legs}${FIG.torso(B)}<rect x="70" y="132" width="60" height="9" fill="${A}"/><rect x="66" y="93" width="68" height="13" rx="6.5" fill="${A}"/>${FIG.head(B)}`,
@@ -119,6 +120,23 @@
       back: () => `<rect class="deep" x="62" y="92" width="76" height="52" rx="14"/>`,
       body: (B, A) => `${FIG.legs}${FIG.torso(B)}<rect x="84" y="112" width="32" height="20" rx="5" fill="#15121d"/><circle cx="93" cy="122" r="3.4" fill="${A}"/><circle class="bulb" cx="107" cy="122" r="3.4" fill="#58B2F2"/>${FIG.head(B)}`,
       front: () => `<rect x="64" y="40" width="72" height="52" rx="24" fill="#171b2c"/><path d="M76 44h16l-12 44h-10z" fill="#fff" opacity=".09"/>`,
+    }),
+    fig({
+      id: 'grim', name: 'Grim', blurb: 'A very small reaper. Only here for your stale branches.',
+      dark: true, mouth: 'none', face: { ey: 70, dx: 15 },
+      back: () => `<path d="M150 20L132 176" stroke="#6b5a4c" stroke-width="5" stroke-linecap="round"/><path class="chrome" d="M150 20q-40 -14 -62 14q30 -12 60 -2z"/>`,
+      body: (B) => `<ellipse class="foot" cx="85" cy="177" rx="14" ry="6.5"/><ellipse class="foot" cx="115" cy="177" rx="14" ry="6.5"/><path fill="${B}" d="M72 98h56l14 78H58z"/>
+        <path fill="${B}" d="M100 22q46 0 46 46v20q0 16 -16 16H70q-16 0 -16 -16V68q0 -46 46 -46z"/>`,
+      front: () => `<path fill="#15121d" d="M100 40q32 0 32 32v10q0 14 -14 14H82q-14 0 -14 -14V72q0 -32 32 -32z"/><path fill="#f3efe6" d="M100 50q23 0 23 22q0 10 -8 14v6H85v-6q-8 -4 -8 -14q0 -22 23 -22z"/><path d="M93 90v-6M100 90v-6M107 90v-6" stroke="#15121d" stroke-width="2"/><path fill="#15121d" d="M97 80l3 -6l3 6z"/>`,
+    }),
+    fig({
+      id: 'blaze', name: 'Blaze', blurb: 'A pocket dragon. Breathes a little fire when the build goes green.',
+      face: { brow: true, my: 88 },
+      back: (B, A) => `<path class="tail" d="M118 150q44 6 46 -30"/><path class="deep" d="M70 104L26 70q-2 30 14 44q-10 2 -12 12q24 6 44 -8z"/><path class="deep" d="M130 104L174 70q2 30 -14 44q10 2 12 12q-24 6 -44 -8z"/>
+        <path fill="${A}" d="M70 40q-14 -14 -8 -32q14 8 20 26z"/><path fill="${A}" d="M130 40q14 -14 8 -32q-14 8 -20 26z"/>`,
+      body: (B, A) => `${FIG.legs}${FIG.torso(B)}<path class="belly" d="M84 104h32q6 0 6 6v30q0 10 -10 10H88q-10 0 -10 -10v-30q0 -6 6 -6z"/><path d="M80 118h40M80 132h40" stroke="var(--body)" stroke-width="2.4" opacity=".6"/>${FIG.head(B)}
+        <path fill="${A}" d="M92 30l8 -12l8 12z"/>`,
+      front: () => `<ellipse class="belly" cx="100" cy="88" rx="24" ry="13"/><circle class="inkfill" cx="93" cy="82" r="1.8"/><circle class="inkfill" cx="107" cy="82" r="1.8"/>`,
     }),
     {
       id: 'cat', name: 'Mochi', blurb: 'Pretends not to care. Checks on your builds anyway.',
@@ -195,7 +213,7 @@
     const [gx, gy, grx, gry, gr] = c.gloss;
     // classes, not inline styles: the app's content security policy blocks style attributes
     const stop = (o, v) => `<stop offset="${o}" class="g-${v}"/>`;
-    return `<svg class="pip" data-char="${c.id}" data-kind="${c.kind || 'blob'}" data-face="${c.glow ? 'glow' : ''}" data-mouth="${c.mouth || ''}" data-acc="${accId}" data-mood="idle" viewBox="0 0 200 200" role="img" aria-label="${c.name}">
+    return `<svg class="pip" data-char="${c.id}" data-kind="${c.kind || 'blob'}" data-face="${c.glow ? 'glow' : c.dark ? 'dark' : ''}" data-mouth="${c.mouth || ''}" data-acc="${accId}" data-mood="idle" viewBox="0 0 200 200" role="img" aria-label="${c.name}">
       <defs>
         <radialGradient id="b${u}" cx=".36" cy=".24" r=".92">${stop(0, 'light')}${stop(0.48, 'body')}${stop(1, 'dark')}</radialGradient>
         <radialGradient id="c${u}">${stop(0, 'cheek')}${stop(1, 'cheek0')}</radialGradient>
