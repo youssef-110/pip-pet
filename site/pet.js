@@ -90,6 +90,15 @@
       arms: ['l', 'r'].map((k) => { const x = k === 'l' ? 54 : 129; return `<g class="arm arm-${k}"><rect x="${x}" y="101" width="17" height="26" rx="8"/><rect class="chrome" x="${x + 1}" y="123" width="15" height="25" rx="6"/><path d="M${x + 1} 134h15" stroke="#5d6373" stroke-width="2"/></g>`; }).join(''),
     }),
     fig({
+      id: 'zuck', name: 'Zuck', blurb: 'A parody of a certain social network founder. Does not blink. Definitely human.',
+      dark: true, face: { dx: 17, my: 88 },
+      back: () => `<circle cx="58" cy="70" r="7" fill="#e9b999"/><circle cx="142" cy="70" r="7" fill="#e9b999"/>`,
+      body: (B) => `${FIG.legs}<rect x="91" y="92" width="18" height="14" fill="#e9b999"/>${FIG.torso(B)}<path fill="#f1c5a6" d="M89 96h22q-2 12 -11 12q-9 0 -11 -12z"/>
+        <path d="M84 100q16 26 32 0" fill="none" stroke="#E0A92B" stroke-width="3" stroke-linecap="round"/>
+        ${FIG.head('#f1c5a6')}<path fill="#6b4a35" d="M57 60q-5 -34 29 -36q6 -6 14 -2q8 -5 16 0q32 2 27 38q-3 -9 -8 -9q-1 -8 -10 -6q-4 -8 -12 -4q-6 -8 -14 -2q-8 -6 -14 2q-10 -2 -12 8q-9 0 -16 11z"/>`,
+      arms: ['l', 'r'].map((k) => { const x = k === 'l' ? 54 : 129; return `<g class="arm arm-${k}"><rect x="${x}" y="101" width="17" height="22" rx="8"/><rect class="skinarm" x="${x + 1.5}" y="119" width="14" height="29" rx="7"/></g>`; }).join(''),
+    }),
+    fig({
       id: 'kage', name: 'Kage', blurb: 'A ninja. You will not hear it arrive, only the chime when your session is done.',
       dark: true, mouth: 'none', face: { brow: true },
       back: (B, A) => `<path d="M136 34L64 150" stroke="#8a8f9c" stroke-width="5" stroke-linecap="round"/><path d="M136 34l8 -13" stroke="#261c2c" stroke-width="7" stroke-linecap="round"/>

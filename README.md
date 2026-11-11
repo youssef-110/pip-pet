@@ -24,9 +24,9 @@ a session is done, or when Claude is waiting on you.
 
 ## Characters
 
-16 characters, 13 colours and 6 things to wear. Some are cute (Pip, Mochi, Boo, Bit, Lotl, Fig, Bun, Nori) and some are not: Nyx the chrome-armed street kid, Kage the ninja, Titan the mech, Vale the knight, Orbit the astronaut, Grim the reaper, Blaze the dragon, and Spark, a pixel critter in the spirit of the Claude Code mascot.
+17 characters, 13 colours and 6 things to wear. Some are cute (Pip, Mochi, Boo, Bit, Lotl, Fig, Bun, Nori) and some are not: Nyx the chrome-armed street kid, Kage the ninja, Titan the mech, Vale the knight, Orbit the astronaut, Grim the reaper, Blaze the dragon, Zuck (a parody founder who never blinks), and Spark, a pixel critter in the spirit of the Claude Code mascot.
 
-Spark and Nyx are fan tributes drawn for this project. They are not official artwork of Anthropic or of any game or show.
+Spark and Nyx are fan tributes drawn for this project. They are not official artwork of Anthropic or of any game or show. Zuck is a cartoon parody and is not affiliated with or endorsed by the person it pokes fun at.
 
 Open Pip from the Start menu or the tray icon to choose. Launching Pip opens its app window, where you pick a character, watch your sessions live and change settings.
 

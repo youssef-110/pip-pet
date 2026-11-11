@@ -50,6 +50,10 @@
 .pip[data-char="spark"] .arm { transform-origin: 50% 50%; }
 .pip .brow { fill: none; stroke: #261c2c; stroke-width: 4; stroke-linecap: round; }
 .pip .chrome { fill: #b4bac8; }
+.pip .skinarm { fill: #f1c5a6; }
+/* Zuck: stands perfectly still, stares, and blinks once in a long while. A slow head scan replaces breathing. */
+.pip[data-char="zuck"][data-mood="idle"] .wrap { animation: pip-scan 7s cubic-bezier(.77, 0, .175, 1) infinite; }
+.pip[data-char="zuck"] .eye-open { animation: pip-blink 14s infinite; }
 .pip .scarf { stroke-width: 9; }
 .pip[data-char="penguin"] .foot { fill: var(--accent2); }
 .pip[data-acc="crown"] .tuft, .pip[data-acc="party"] .tuft { display: none; }
@@ -124,6 +128,7 @@
 @keyframes pip-breathe { 50% { transform: scale(1.03, .97); } }
 @keyframes pip-blink { 0%, 46%, 50%, 100% { transform: scaleY(1); } 48% { transform: scaleY(.08); } }
 @keyframes pip-sway { 50% { transform: rotate(9deg); } }
+@keyframes pip-scan { 0%, 40%, 100% { transform: rotate(0); } 50%, 62% { transform: rotate(-3deg); } 72%, 84% { transform: rotate(3deg); } }
 @keyframes pip-stand { 50% { transform: scale(1.012, .988); } }
 @keyframes pip-fig-tap-l { from { transform: rotate(-30deg); } to { transform: rotate(-42deg); } }
 @keyframes pip-fig-tap-r { from { transform: rotate(30deg); } to { transform: rotate(42deg); } }

@@ -59,7 +59,7 @@ main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(300p
 .panel h2 span { font: 500 16px var(--body); color: var(--ink-2); margin-left: 6px; }
 .hint { font-size: 14px; margin-top: 16px; }
 
-.chars { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
+.chars { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 3px; }
 .chars .pet { border-radius: 18px; transition: background .2s, transform .3s var(--spring); }
 .chars .pet:hover { transform: translateY(-3px); }
 .chars .pet[aria-pressed="true"] { background: var(--paper); box-shadow: 0 4px 0 rgba(34, 26, 40, .1); }
