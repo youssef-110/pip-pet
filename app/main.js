@@ -63,7 +63,10 @@ function onEvent(ev) {
 // ---- hook receiver (loopback only; JSON content-type required so web pages cannot post to it) ----
 function startServer() {
   http.createServer((req, res) => {
-    if (req.method !== 'POST' || req.url !== '/hook' || !/application\/json/.test(req.headers['content-type'] || '')) {
+    // Only Claude Code's hook client may post: exact JSON type, no browser Origin, loopback Host (blocks CSRF and DNS rebinding).
+    const type = String(req.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
+    const local = req.headers.host === `127.0.0.1:${hooks.PORT}` || req.headers.host === `localhost:${hooks.PORT}`;
+    if (req.method !== 'POST' || req.url !== '/hook' || type !== 'application/json' || req.headers.origin || !local) {
       res.writeHead(req.url === '/health' ? 200 : 404).end('pip'); return;
     }
     let body = '';
@@ -73,7 +76,7 @@ function startServer() {
       try { onEvent(JSON.parse(body)); } catch {}
     });
   }).on('error', (e) => { hookNote = `Port ${hooks.PORT} is busy, I cannot hear Claude.`; console.error(e.message); emit(); })
-    .listen(hooks.PORT, '127.0.0.1');
+    .listen(hooks.PORT, '127.0.0.1', installHooks); // hooks are only installed once Pip really owns the port
 }
 
 // ---- fullscreen watcher: Windows reports BUSY / D3D fullscreen / presentation as 2 / 3 / 4 ----
@@ -150,7 +153,7 @@ function createWindow() {
   }, 33);
 }
 
-ipcMain.on('ready', () => { installHooks(); emit(); });
+ipcMain.on('ready', () => emit());
 ipcMain.on('ignore', (_e, on) => win.setIgnoreMouseEvents(on, { forward: true }));
 ipcMain.on('ack', (_e, id) => ack(id));
 ipcMain.on('menu', () => buildMenu().popup({ window: win }));
