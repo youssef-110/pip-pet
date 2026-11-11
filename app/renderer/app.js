@@ -78,6 +78,7 @@ petEl.addEventListener('pointerup', () => {
   else { PipPet.pet(petEl); chime('boop'); if (S.bubble) pip.ack(S.bubble.id); }
   down = null;
 });
+petEl.addEventListener('dblclick', () => pip.openUi());
 bubbleEl.addEventListener('click', () => { if (S.bubble) pip.ack(S.bubble.id); });
 window.addEventListener('contextmenu', (e) => { e.preventDefault(); pip.menu(); });
 setInterval(() => { if (hover) render(); }, 30000);

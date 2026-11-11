@@ -57,7 +57,7 @@ const shelfPets = CHARS.map((c, i) => {
   const b = el('button', null, 'pet');
   b.setAttribute('aria-label', c.name); b.style.setProperty('--i', i);
   b.addEventListener('click', () => { pick.char = c.id; drawPicked(); PipPet.pet(b); });
-  shelf.append(b);
+  const slot = el('div', null, 'slot'); slot.append(b); shelf.append(slot);
   return b;
 });
 for (const s of SKINS) {
@@ -140,7 +140,7 @@ if (!reduced) setInterval(() => {
 }, 2600);
 
 // ---- closing parade: every character, each in its own colour ----
-CHARS.forEach((c, i) => {
+[0, 2, 7, 4, 1, 9, 3, 13].map((k) => CHARS[k]).forEach((c, i) => {
   const n = el('div', null, 'pet'); n.style.setProperty('--i', i % 4);
   PipPet.mount(n, { char: c.id, skin: SKINS[(i * 3 + 5) % SKINS.length].id, acc: ACCS[(i * 2 + 1) % ACCS.length].id, mood: i % 3 === 0 ? 'done' : 'idle' });
   $('parade').append(n);

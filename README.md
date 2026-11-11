@@ -21,7 +21,11 @@ a session is done, or when Claude is waiting on you.
 
 ## Characters
 
-8 characters, 10 colours and 6 things to wear. Right-click Pip (or use the tray icon) to choose.
+14 characters, 12 colours and 6 things to wear. Some are cute (Pip, Mochi, Boo, Bit, Lotl, Fig, Bun, Nori) and some are not: Nyx the chrome-armed merc, Kage the ninja, Titan the mech, Vale the knight, Orbit the astronaut, and Spark, a blocky critter inspired by Claude Code.
+
+Open Pip from the Start menu or the tray icon to choose. Launching Pip opens its app window, where you pick a character, watch your sessions live and change settings.
+
+![Pip app window](docs/app.png)
 
 ![Character sheet](docs/characters.png)
 

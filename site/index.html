@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pip, the desk pet for Claude Code</title>
-<meta name="description" content="Pip sits on your desktop, watches every Claude Code session you have running, and tells you when one is done or needs you. 8 characters, 10 colours, free.">
+<meta name="description" content="Pip sits on your desktop, watches every Claude Code session you have running, and tells you when one is done or needs you. 14 characters, 12 colours, free.">
 <meta property="og:title" content="Pip, the desk pet for Claude Code">
-<meta property="og:description" content="A small animated pet that tells you when Claude is done or needs you. 8 characters, 10 colours, free.">
+<meta property="og:description" content="A small animated pet that tells you when Claude is done or needs you. 14 characters, 12 colours, free.">
 <meta property="og:image" content="https://pip-pet.vercel.app/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -85,7 +85,6 @@
     <div class="shell">
       <h2 class="rise">Pick who sits on your desk</h2>
       <div class="shelf" id="shelf" role="group" aria-label="Character"></div>
-      <div class="ledge" aria-hidden="true"></div>
       <div class="cast-grid">
         <div>
           <h3 class="cast-name" id="cast-name"></h3>
@@ -100,7 +99,7 @@
             <p class="label" id="l-acc">Wearing</p>
             <div class="chips" id="chips" role="group" aria-labelledby="l-acc"></div>
           </div>
-          <p class="combo">8 characters, 10 colours and 6 things to wear. That is 480 pets, and this whole page follows the one you choose.</p>
+          <p class="combo">14 characters, 12 colours and 6 things to wear. That is 1,008 pets, and this whole page follows the one you choose.</p>
         </div>
       </div>
     </div>
@@ -142,7 +141,7 @@
     <ol class="steps">
       <li><h3>Install Pip</h3><p>One installer. Pip settles into the corner of your screen and the system tray.</p></li>
       <li><h3>It connects itself</h3><p>Pip adds a few hooks to <code>~/.claude/settings.json</code>. Events go to <code>127.0.0.1</code> only. Remove them from the menu whenever you like.</p></li>
-      <li><h3>Run Claude anywhere</h3><p>Any terminal, any project, as many sessions as you want. Right-click Pip to change character, colour or outfit.</p></li>
+      <li><h3>Run Claude anywhere</h3><p>Any terminal, any project, as many sessions as you want. Open Pip from the tray to change character, colour or outfit.</p></li>
     </ol>
     <p class="both">Works the same on a Claude subscription and on an API key, because Pip listens to Claude Code itself, not to your account.</p>
   </section>

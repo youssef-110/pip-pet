@@ -32,22 +32,45 @@
 .pip .bang { transform-box: fill-box; transform-origin: 50% 100%; }
 .pip .spark { fill: var(--accent); transform-box: fill-box; transform-origin: center; }
 .pip .heart { fill: #f0567a; transform-box: fill-box; transform-origin: center; }
-.pip[data-acc="crown"] .sprout, .pip[data-acc="party"] .sprout, .pip[data-acc="crown"] .antenna, .pip[data-acc="party"] .antenna, .pip[data-char="robot"][data-acc="headphones"] .deep { display: none; }
+.pip[data-acc="crown"] .antenna, .pip[data-acc="party"] .antenna { display: none; }
 
-/* robot: glowing face on a dark screen */
-.pip[data-char="robot"] .cheek, .pip[data-char="robot"] .glint { display: none; }
-.pip[data-char="robot"] .eye-open, .pip[data-char="robot"] .m-open, .pip[data-char="robot"] .m-o { fill: #b9f0ff; }
-.pip[data-char="robot"] .eye-happy, .pip[data-char="robot"] .eye-shut, .pip[data-char="robot"] .m-smile { stroke: #b9f0ff; }
-.pip[data-char="robot"] .glasses { stroke: #b9f0ff; }
-/* penguin: the beak is the mouth */
-.pip[data-char="penguin"] .m-smile, .pip[data-char="penguin"] .m-open, .pip[data-char="penguin"] .m-o { display: none !important; }
+/* glowing eyes on a dark visor or screen */
+.pip[data-face="glow"] .cheek, .pip[data-face="glow"] .glint { display: none; }
+.pip[data-face="glow"] .eye-open { fill: var(--glow, #b9f0ff); }
+.pip[data-face="glow"] .eye-happy, .pip[data-face="glow"] .eye-shut, .pip[data-face="glow"] .glasses { stroke: var(--glow, #b9f0ff); }
+.pip[data-mouth="glow"] .m-open, .pip[data-mouth="glow"] .m-o { fill: var(--glow, #b9f0ff); }
+.pip[data-mouth="glow"] .m-smile { stroke: var(--glow, #b9f0ff); }
+.pip[data-mouth="none"] .m-smile, .pip[data-mouth="none"] .m-open, .pip[data-mouth="none"] .m-o { display: none !important; }
+.pip[data-char="nyx"], .pip[data-char="titan"], .pip[data-char="vale"] { --glow: var(--accent); }
+.pip[data-char="nyx"] .m-smile { stroke: #261c2c; } .pip[data-char="nyx"] .m-open, .pip[data-char="nyx"] .m-o { fill: #261c2c; }
+.pip[data-char="kage"] .eye-open { fill: #261c2c; } .pip[data-char="kage"] .glint { fill: #fff; }
+.pip[data-char="kage"] .eye-happy, .pip[data-char="kage"] .eye-shut { stroke: #261c2c; }
+.pip .brow { fill: none; stroke: #261c2c; stroke-width: 4; stroke-linecap: round; }
+.pip .chrome { fill: #b4bac8; }
+.pip .scarf { stroke-width: 9; }
 .pip[data-char="penguin"] .foot { fill: var(--accent2); }
+.pip[data-acc="crown"] .tuft, .pip[data-acc="party"] .tuft { display: none; }
+.pip[data-acc="headphones"] .ear-bolt { display: none; }
+
+/* figures: arms hang from the shoulder and swing from there */
+.pip[data-kind="figure"] .arm { transform-origin: 50% 9%; fill: var(--dark); }
+.pip[data-kind="figure"] .wrap { animation-name: pip-stand; }
+.pip[data-kind="figure"][data-mood="working"] .arm-l { animation: pip-fig-tap-l .32s ease-in-out infinite alternate; }
+.pip[data-kind="figure"][data-mood="working"] .arm-r { animation: pip-fig-tap-r .32s ease-in-out infinite alternate-reverse; }
+.pip[data-kind="figure"][data-mood="working"] .wrap { animation: pip-type .46s ease-in-out infinite; }
+.pip[data-kind="figure"][data-mood="done"] .arm-l { transform: rotate(152deg); }
+.pip[data-kind="figure"][data-mood="done"] .arm-r { transform: rotate(-152deg); }
+.pip[data-kind="figure"][data-mood="done"] .wrap { animation: pip-hop 1.05s cubic-bezier(.3, 0, .4, 1) infinite; }
+.pip[data-kind="figure"][data-mood="needs"] .arm-r, .pip[data-kind="figure"][data-mood="error"] .arm-r { animation: pip-fig-wave .5s ease-in-out infinite alternate; }
+.pip[data-kind="figure"][data-mood="needs"] .wrap, .pip[data-kind="figure"][data-mood="error"] .wrap { animation: pip-tilt 1.2s ease-in-out infinite; }
+.pip[data-kind="figure"][data-mood="sleep"] .wrap { animation: pip-stand 5.5s ease-in-out infinite; }
+.petted .pip[data-kind="figure"] .wrap { animation: pip-squish .9s cubic-bezier(.3, 1.5, .5, 1) 1; }
 
 /* per-character idle */
 .pip[data-char="ghost"] .wrap { animation: pip-float 3.2s ease-in-out infinite; }
 .pip[data-char="ghost"] .shadow { animation: pip-shadow 3.2s ease-in-out infinite; }
 .pip[data-char="ghost"] .m-smile { display: none; } .pip[data-char="ghost"] .m-o { display: block; }
-.pip[data-char="robot"] .bulb { animation: pip-bulb 2.4s ease-in-out infinite; }
+.pip .bulb { transform-box: fill-box; transform-origin: center; animation: pip-bulb 2.4s ease-in-out infinite; }
 
 /* working: head down, laptop out, hands peeking over the lid */
 .pip[data-mood="working"] .laptop { display: block; }
@@ -98,6 +121,10 @@
 @keyframes pip-breathe { 50% { transform: scale(1.03, .97); } }
 @keyframes pip-blink { 0%, 46%, 50%, 100% { transform: scaleY(1); } 48% { transform: scaleY(.08); } }
 @keyframes pip-sway { 50% { transform: rotate(9deg); } }
+@keyframes pip-stand { 50% { transform: scale(1.012, .988); } }
+@keyframes pip-fig-tap-l { from { transform: rotate(-30deg); } to { transform: rotate(-42deg); } }
+@keyframes pip-fig-tap-r { from { transform: rotate(30deg); } to { transform: rotate(42deg); } }
+@keyframes pip-fig-wave { from { transform: rotate(-132deg); } to { transform: rotate(-164deg); } }
 @keyframes pip-ear { 50% { transform: rotate(6deg); } }
 @keyframes pip-wag { 50% { transform: rotate(14deg); } }
 @keyframes pip-gill { 50% { transform: rotate(7deg) scaleX(.94); } }

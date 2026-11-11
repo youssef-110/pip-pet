@@ -45,7 +45,13 @@ function update(transform, file = SETTINGS) {
   return 'changed';
 }
 
+function installed(file = SETTINGS) {
+  try { const h = JSON.parse(fs.readFileSync(file, 'utf8')).hooks || {}; return EVENTS.every((ev) => (h[ev] || []).some((g) => (g.hooks || []).some(isOurs))); }
+  catch { return false; }
+}
+
 module.exports = {
+  installed,
   PORT, URL, EVENTS, SETTINGS, withHooks, withoutHooks,
   install: (file) => update(withHooks, file),
   uninstall: (file) => update(withoutHooks, file),

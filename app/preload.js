@@ -8,4 +8,12 @@ contextBridge.exposeInMainWorld('pip', {
   ack: (id) => ipcRenderer.send('ack', id),
   menu: () => ipcRenderer.send('menu'),
   drag: (v) => ipcRenderer.send('drag', v),
+  // app window
+  openUi: () => ipcRenderer.send('ui'),
+  save: (patch) => ipcRenderer.send('save', patch),
+  login: (on) => ipcRenderer.send('login', on),
+  hooks: (action) => ipcRenderer.send('hooks', action),
+  forget: () => ipcRenderer.send('forget'),
+  demo: (name) => ipcRenderer.send('demo', name),
+  open: (what) => ipcRenderer.send('open', what),
 });

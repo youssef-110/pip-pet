@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu, ipcMain, screen, nativeImage } = require('electron');
+const { app, BrowserWindow, Tray, Menu, ipcMain, screen, nativeImage, shell } = require('electron');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -9,10 +9,13 @@ const { CHARS, SKINS, ACCS } = require('./renderer/pet.js');
 
 const W = 300, H = 340, DONE_MS = 20000;
 const map = new Map();
-let win, tray, watcher, settings, fullscreen = false, shown = false, hideTimer, dragOff, hookNote = '';
+let hooksOk = false;
+let win, ui, tray, watcher, settings, fullscreen = false, shown = false, hideTimer, dragOff, hookNote = '';
 const ackTimers = new Map();
 
-if (!app.requestSingleInstanceLock()) app.quit();
+// A second copy must do nothing except hand over to the first one, which then opens the app window.
+const primary = app.requestSingleInstanceLock();
+if (!primary) app.quit();
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 
 const settingsFile = () => path.join(app.getPath('userData'), 'settings.json');
@@ -21,7 +24,13 @@ function loadSettings() {
   try { s = JSON.parse(fs.readFileSync(settingsFile(), 'utf8')); } catch {}
   return { char: 'blob', skin: 'coral', acc: 'none', mode: 'auto', sound: true, ...s };
 }
+// Settings arrive from the app window, so only known keys with known values are accepted.
+const ALLOWED = {
+  char: CHARS.map((c) => c.id), skin: SKINS.map((s) => s.id), acc: ACCS.map((a) => a.id),
+  mode: ['always', 'auto', 'shy'], sound: [true, false],
+};
 function save(patch) {
+  for (const k of Object.keys(patch)) if (k !== 'pos' && !(ALLOWED[k] || []).includes(patch[k])) delete patch[k];
   Object.assign(settings, patch);
   fs.writeFileSync(settingsFile(), JSON.stringify(settings, null, 2));
   buildMenu(); emit();
@@ -30,9 +39,9 @@ function save(patch) {
 // ---- state -> renderer ----
 function emit() {
   const list = [...map.values()];
-  if (win && !win.isDestroyed()) {
-    win.webContents.send('state', { sessions: list, mood: sessions.mood(list), bubble: sessions.bubble(list), settings, note: hookNote });
-  }
+  const info = { version: app.getVersion(), login: app.getLoginItemSettings().openAtLogin, hooks: hooksOk };
+  const state = { sessions: list, mood: sessions.mood(list), bubble: sessions.bubble(list), settings, note: hookNote, info };
+  for (const w of [win, ui]) if (w && !w.isDestroyed()) w.webContents.send('state', state);
   updateVisibility(list);
 }
 function updateVisibility(list = [...map.values()]) {
@@ -94,10 +103,17 @@ function startWatcher() {
 }
 
 // ---- menu ----
+const DEMO = {
+  working: ['UserPromptSubmit'], done: ['Stop', { last_assistant_message: 'All 42 tests pass. Ready when you are.' }],
+  needs: ['PermissionRequest', { tool_name: 'Bash' }], end: ['SessionEnd'],
+};
+const LINKS = { releases: 'https://github.com/youssef-110/pip-pet/releases/latest', site: 'https://pip-pet.vercel.app', repo: 'https://github.com/youssef-110/pip-pet' };
 const demo = (name, extra) => () => onEvent({ session_id: 'demo', cwd: 'C:\\demo\\my-project', hook_event_name: name, ...extra });
 function buildMenu() {
   const radio = (key, items) => items.map((i) => ({ label: i.name, type: 'radio', checked: settings[key] === i.id, click: () => save({ [key]: i.id }) }));
   const menu = Menu.buildFromTemplate([
+    { label: 'Open Pip', click: showUi },
+    { type: 'separator' },
     { label: 'Character', submenu: radio('char', CHARS) },
     { label: 'Colour', submenu: radio('skin', SKINS) },
     { label: 'Wearing', submenu: radio('acc', ACCS) },
@@ -107,7 +123,7 @@ function buildMenu() {
       { id: 'shy', name: 'Only when Claude is done or needs me' },
     ]) },
     { label: 'Sound', type: 'checkbox', checked: settings.sound, click: (i) => save({ sound: i.checked }) },
-    { label: 'Start with Windows', type: 'checkbox', checked: app.getLoginItemSettings().openAtLogin, click: (i) => app.setLoginItemSettings({ openAtLogin: i.checked }) },
+    { label: 'Start with Windows', type: 'checkbox', checked: app.getLoginItemSettings().openAtLogin, click: (i) => setLogin(i.checked) },
     { type: 'separator' },
     { label: 'Try it', submenu: [
       { label: 'Working', click: demo('UserPromptSubmit') },
@@ -117,7 +133,7 @@ function buildMenu() {
     ] },
     { label: 'Claude Code hooks', submenu: [
       { label: 'Install / repair', click: () => installHooks() },
-      { label: 'Remove', click: () => { try { hooks.uninstall(); } catch (e) { console.error(e.message); } } },
+      { label: 'Remove', click: removeHooks },
     ] },
     { label: 'Forget all sessions', click: () => { map.clear(); emit(); } },
     { type: 'separator' },
@@ -127,12 +143,33 @@ function buildMenu() {
   return menu;
 }
 function installHooks() {
-  try { hooks.install(); hookNote = ''; }
+  try { hooks.install(); hookNote = ''; hooksOk = true; }
   catch (e) { hookNote = 'I could not read your Claude settings, so hooks are not installed.'; console.error(e.message); }
   emit();
 }
 
-// ---- window ----
+function removeHooks() {
+  try { hooks.uninstall(); hooksOk = false; } catch (e) { console.error(e.message); }
+  emit();
+}
+// --hidden keeps the app window closed when Windows starts Pip at login
+function setLogin(on) { app.setLoginItemSettings({ openAtLogin: !!on, args: ['--hidden'] }); buildMenu(); emit(); }
+
+// ---- app window: pick a character, watch sessions, change settings ----
+function showUi() {
+  if (ui && !ui.isDestroyed()) { if (ui.isMinimized()) ui.restore(); ui.show(); ui.focus(); return; }
+  ui = new BrowserWindow({
+    width: 1060, height: 740, minWidth: 820, minHeight: 600, title: 'Pip', backgroundColor: '#fdebe6', autoHideMenuBar: true,
+    icon: path.join(__dirname, 'assets', 'icon.png'), webPreferences: { preload: path.join(__dirname, 'preload.js') },
+  });
+  ui.setMenu(null);
+  ui.loadFile(path.join(__dirname, 'renderer', 'ui.html'));
+  ui.on('closed', () => { ui = null; });
+  // dev only: PIP_SHOT=<file.png> saves a screenshot of the app window for the README
+  if (process.env.PIP_SHOT) ui.webContents.once('did-finish-load', () => setTimeout(async () => fs.writeFileSync(process.env.PIP_SHOT, (await ui.webContents.capturePage()).toPNG()), 2500));
+}
+
+// ---- pet window ----
 function createWindow() {
   const wa = screen.getPrimaryDisplay().workArea;
   let { x, y } = settings.pos || { x: wa.x + wa.width - W - 24, y: wa.y + wa.height - H - 8 };
@@ -154,6 +191,13 @@ function createWindow() {
 }
 
 ipcMain.on('ready', () => emit());
+ipcMain.on('ui', showUi);
+ipcMain.on('save', (_e, patch) => { if (patch && typeof patch === 'object') { delete patch.pos; save({ ...patch }); } });
+ipcMain.on('login', (_e, on) => setLogin(on));
+ipcMain.on('hooks', (_e, action) => (action === 'remove' ? removeHooks() : installHooks()));
+ipcMain.on('forget', () => { map.clear(); emit(); });
+ipcMain.on('demo', (_e, name) => { if (DEMO[name]) demo(...DEMO[name])(); });
+ipcMain.on('open', (_e, what) => { if (LINKS[what]) shell.openExternal(LINKS[what]); });
 ipcMain.on('ignore', (_e, on) => win.setIgnoreMouseEvents(on, { forward: true }));
 ipcMain.on('ack', (_e, id) => ack(id));
 ipcMain.on('menu', () => buildMenu().popup({ window: win }));
@@ -163,14 +207,19 @@ ipcMain.on('drag', (_e, on) => {
 });
 
 app.whenReady().then(() => {
+  if (!primary) return;
   settings = loadSettings();
   tray = new Tray(nativeImage.createFromPath(path.join(__dirname, 'assets', 'tray.png')));
   tray.setToolTip('Pip');
+  tray.on('click', showUi);
   buildMenu();
   createWindow();
   startServer();
   startWatcher();
+  if (!process.argv.includes('--hidden')) showUi();
 });
-app.on('second-instance', () => { if (win) { shown = false; updateVisibility(); } });
+// Launching Pip again opens the app window instead of silently doing nothing.
+app.on('second-instance', () => { if (app.isReady()) showUi(); });
 app.on('window-all-closed', () => app.quit());
+app.on('before-quit', () => { if (win && !win.isDestroyed()) win.destroy(); });
 app.on('quit', () => { if (watcher) watcher.kill(); });

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+<title>Pip</title>
+<link rel="stylesheet" href="pet.css">
+<link rel="stylesheet" href="ui.css">
+</head>
+<body>
+<header>
+  <div class="mark"><img src="logo.svg" alt="" width="32" height="32"><span>Pip</span></div>
+  <div class="seg" id="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" data-tab="pet" aria-selected="true">Your pet</button>
+    <button role="tab" data-tab="sessions" aria-selected="false">Sessions <span class="count" id="count"></span></button>
+    <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
+  </div>
+  <span class="version" id="version"></span>
+</header>
+
+<main>
+  <section class="stage" aria-label="Preview">
+    <div class="disc" aria-hidden="true"></div>
+    <button class="pet" id="preview" aria-label="Pet your character"></button>
+    <h1 id="name"></h1>
+    <p id="blurb"></p>
+    <div class="seg" id="moods" role="group" aria-label="Preview a mood">
+      <button data-mood="idle" aria-pressed="true">Idle</button>
+      <button data-mood="working">Working</button>
+      <button data-mood="done">Done</button>
+      <button data-mood="needs">Needs you</button>
+      <button data-mood="sleep">Asleep</button>
+    </div>
+  </section>
+
+  <div class="panels">
+    <section class="panel" id="tab-pet" role="tabpanel">
+      <h2>Character</h2>
+      <div class="chars" id="chars" role="group" aria-label="Character"></div>
+      <h2>Colour <span id="colour-name"></span></h2>
+      <div class="swatches" id="swatches" role="group" aria-label="Colour"></div>
+      <h2>Wearing</h2>
+      <div class="chips" id="accs" role="group" aria-label="Wearing"></div>
+      <p class="hint">Changes show on your desktop pet straight away.</p>
+    </section>
+
+    <section class="panel" id="tab-sessions" role="tabpanel" hidden>
+      <h2>Claude Code sessions</h2>
+      <div class="rows" id="rows"></div>
+      <div class="line">
+        <p class="hint" id="hook-status"></p>
+        <button class="btn ghost" id="forget">Forget all</button>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-settings" role="tabpanel" hidden>
+      <h2>When to show Pip</h2>
+      <div class="chips" id="modes" role="group" aria-label="When to show Pip">
+        <button data-id="always">Always</button>
+        <button data-id="auto">Hide in fullscreen</button>
+        <button data-id="shy">Only when done or needed</button>
+      </div>
+      <div class="switch-row"><span>Sound when a session is done or needs you</span><button class="switch" id="sound" role="switch" aria-label="Sound"></button></div>
+      <div class="switch-row"><span>Start Pip when Windows starts</span><button class="switch" id="login" role="switch" aria-label="Start with Windows"></button></div>
+
+      <h2>Claude Code connection</h2>
+      <p class="hint" id="hook-status-2"></p>
+      <div class="chips">
+        <button class="btn" id="hooks-install">Install or repair hooks</button>
+        <button class="btn ghost" id="hooks-remove">Remove hooks</button>
+      </div>
+
+      <h2>Try it on your desktop pet</h2>
+      <div class="chips" id="demo">
+        <button data-ev="working">Working</button>
+        <button data-ev="done">Done</button>
+        <button data-ev="needs">Needs you</button>
+        <button data-ev="end">End demo</button>
+      </div>
+
+      <h2>About</h2>
+      <div class="chips">
+        <button class="btn ghost" data-open="releases">Get the latest version</button>
+        <button class="btn ghost" data-open="site">Website</button>
+        <button class="btn ghost" data-open="repo">Source on GitHub</button>
+      </div>
+      <p class="hint">Pip is an independent fan project. Not affiliated with or endorsed by Anthropic.</p>
+    </section>
+  </div>
+</main>
+
+<script src="pet.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
