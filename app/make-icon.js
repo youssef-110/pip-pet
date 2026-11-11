@@ -11,15 +11,15 @@ function png(size) {
       let r = 0, g = 0, b = 0, a = 0;
       for (let sy = 0; sy < SS; sy++) for (let sx = 0; sx < SS; sx++) {
         const u = (x + (sx + 0.5) / SS) / size, v = (y + (sy + 0.5) / SS) / size;
-        const leaf = inEllipse(u, v, 0.4, 0.12, 0.13, 0.06) || inEllipse(u, v, 0.63, 0.1, 0.13, 0.06);
-        const body = inEllipse(u, v, 0.5, 0.58, 0.44, 0.4);
+        const leaf = inEllipse(u, v, 0.26, 0.17, 0.085, 0.15) || inEllipse(u, v, 0.74, 0.17, 0.085, 0.15); // horns
+        const body = ((u - 0.5) / 0.45) ** 4 + ((v - 0.59) / 0.39) ** 4 <= 1;
         if (!leaf && !body) continue;
         const eye = (cx) => inEllipse(u, v, cx, 0.56, 0.055, 0.075);
         const glint = inEllipse(u, v, 0.37, 0.53, 0.02, 0.02) || inEllipse(u, v, 0.67, 0.53, 0.02, 0.02) || inEllipse(u, v, 0.3, 0.36, 0.09, 0.045);
         // light from the top left, like the SVG characters
         const t = Math.min(1, Math.hypot(u - 0.36, v - 0.34) / 0.62), lerp = (a, b, k) => a + (b - a) * k;
         const shade = t < 0.5 ? [248, 180, 160].map((x, i) => lerp(x, [240, 118, 90][i], t * 2)) : [240, 118, 90].map((x, i) => lerp(x, [190, 92, 80][i], t * 2 - 1));
-        const c = !body ? [88, 178, 116] : glint ? [255, 255, 255] : eye(0.35) || eye(0.65) ? [38, 28, 44] : shade;
+        const c = !body ? [252, 222, 212] : glint ? [255, 255, 255] : eye(0.35) || eye(0.65) ? [38, 28, 44] : shade;
         r += c[0]; g += c[1]; b += c[2]; a++;
       }
       const o = y * (size * 4 + 1) + 1 + x * 4, n = SS * SS;

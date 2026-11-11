@@ -51,10 +51,12 @@
   // top: y of the head's highest point. hw: half-width at eye level. gloss: [cx, cy, rx, ry, rotation].
   const CHARS = [
     {
-      id: 'blob', name: 'Pip', blurb: 'The original. Calm, round, and grows a sprout when things go well.',
-      top: 48, hw: 61, face: {}, gloss: [72, 80, 17, 9, -38], feet: true,
-      body: (B) => `<path fill="${B}" d="${BLOB}"/>`,
-      front: (B, A) => `<g class="sprout"><path class="stem" d="M100 50q-2 -12 4 -20"/><path fill="${A}" d="M104 30q-16 -8 -20 6q14 6 20 -6z"/><path fill="${A}" d="M104 30q14 -12 22 0q-10 10 -22 0z"/></g>`,
+      id: 'blob', name: 'Pip', blurb: 'The original. A small horned critter who takes your sessions very seriously.',
+      top: 60, hw: 60, face: { ey: 106, dx: 24 }, gloss: [66, 80, 17, 8, -28], feet: true,
+      back: (B) => `<path class="tail" d="M152 156q30 2 30 -26"/>
+        <path class="belly" d="M58 74q-8 -30 8 -38q16 8 16 30z"/><path class="belly" d="M142 74q8 -30 -8 -38q-16 8 -16 30z"/>`,
+      body: (B) => `<rect fill="${B}" x="40" y="60" width="120" height="112" rx="48"/>`,
+      front: () => `<ellipse class="belly" cx="100" cy="150" rx="34" ry="20"/>`,
     },
     {
       id: 'cat', name: 'Mochi', blurb: 'Pretends not to care. Checks on your builds anyway.',
