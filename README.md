@@ -16,6 +16,8 @@ a session is done, or when Claude is waiting on you.
 - **Done**: Pip hops, chimes, and shows the project name and the last line Claude wrote.
 - **Needs you**: on a permission prompt or a question, Pip waves until you come back.
 - **All sessions**: one dot per running session. Hover to see what each one is doing.
+- **There when Claude is**: Pip appears while Claude Code or the Claude desktop app is open and steps away when they close. Right-click to hide it until Claude needs you, or switch it off in Settings.
+- **Picks up nicely**: drag Pip anywhere; it dangles and kicks while you carry it.
 - **Yours**: three sizes, sound on or off, start with Windows, and an update notice when a new version is out.
 - **Out of the way**: Pip hides when you go fullscreen and only pops up when a session is done or needs you.
 - **Works with a Claude subscription and with an API key**, because it listens to Claude Code hooks, not to your account.

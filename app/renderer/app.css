@@ -5,6 +5,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: transparent;
 #stage.in { opacity: 1; transform: none; transition: opacity .2s ease, transform .5s cubic-bezier(.2, 1.5, .4, 1); }
 #pet { width: var(--pet, 150px); height: var(--pet, 150px); transition: width .25s cubic-bezier(.22, 1, .36, 1), height .25s cubic-bezier(.22, 1, .36, 1); cursor: grab; flex: none; }
 #pet:active { cursor: grabbing; }
+#pet.rim .pip { filter: drop-shadow(0 0 1.2px rgba(255, 255, 255, .7)); }
 
 #bubble { max-width: 252px; margin-bottom: 4px; padding: 10px 14px 11px; background: #fff; border-radius: 18px; box-shadow: 0 4px 0 rgba(34, 26, 40, .12), 0 10px 26px rgba(34, 26, 40, .2);
   position: relative; cursor: pointer; animation: pop .36s cubic-bezier(.2, 1.5, .4, 1); transform-origin: 50% 100%; }

@@ -78,7 +78,7 @@ main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(300p
 .btn.ghost:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
 
 .switch-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 0; border-bottom: 1px solid rgba(34, 26, 40, .1); font-weight: 500; }
-.switch-row:first-of-type { margin-top: 18px; }
+.panel h2 + .switch-row { margin-top: -4px; }
 .switch { all: unset; cursor: pointer; width: 50px; height: 30px; border-radius: 15px; background: rgba(34, 26, 40, .22); position: relative; flex: none; transition: background .2s; }
 .switch::after { content: ''; position: absolute; top: 4px; left: 4px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform .25s var(--spring); }
 .switch[aria-checked="true"] { background: var(--ink); }

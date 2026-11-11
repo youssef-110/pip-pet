@@ -1,6 +1,6 @@
 {
   "name": "pip-pet",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "A tiny desk pet that watches your Claude Code sessions",
   "author": "Pip",
   "license": "MIT",

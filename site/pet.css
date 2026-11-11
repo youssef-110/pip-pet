@@ -146,6 +146,21 @@
 @keyframes pip-squish { 0% { transform: scale(1, 1); } 25% { transform: scale(1.16, .8); } 60% { transform: scale(.95, 1.07); } 100% { transform: scale(1, 1); } }
 @keyframes pip-heart { 0% { transform: translateY(14px) scale(.2); opacity: 0; } 35% { transform: translateY(0) scale(1.25); opacity: 1; } 100% { transform: translateY(-26px) scale(.8); opacity: 0; } }
 
+/* picked up and carried (class on the mount element): dangle from the top, limbs up, legs kicking */
+.dragging .pip .wrap { animation: none !important; transform-origin: 50% 8%; transform: rotate(calc(var(--sway, 0) * 1deg)) !important; transition: transform .2s ease-out; }
+.dragging .pip .laptop, .dragging .pip .zzz, .dragging .pip .m-smile, .dragging .pip .eye-shut, .dragging .pip .eye-happy { display: none !important; }
+.dragging .pip .eye-open { display: block !important; animation: none !important; transform: scale(1.18) !important; }
+.dragging .pip .m-o { display: block; }
+.dragging .pip .arm-l { animation: none !important; transform: translate(-8px, -34px) rotate(-24deg) !important; }
+.dragging .pip .arm-r { animation: none !important; transform: translate(8px, -34px) rotate(24deg) !important; }
+.dragging .pip[data-kind="figure"] .arm-l { transform: rotate(158deg) !important; }
+.dragging .pip[data-kind="figure"] .arm-r { transform: rotate(-158deg) !important; }
+.dragging .pip .foot { transform-box: fill-box; transform-origin: 50% 0; animation: pip-kick .34s ease-in-out infinite alternate; }
+.dragging .pip .foot + .foot { animation-direction: alternate-reverse; }
+.dragging .pip .shadow { opacity: .35; transform: scale(.55); }
+.landed .pip .wrap { animation: pip-squish .55s cubic-bezier(.3, 1.5, .5, 1) 1 !important; }
+@keyframes pip-kick { from { transform: translateY(0) rotate(-14deg); } to { transform: translateY(4px) rotate(14deg); } }
+
 @media (prefers-reduced-motion: reduce) {
   .pip *, .petted .pip * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }

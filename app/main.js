@@ -10,6 +10,8 @@ const { CHARS, SKINS, ACCS } = require('./renderer/pet.js');
 const W = 300, H = 340, DONE_MS = 20000;
 const map = new Map();
 let hooksOk = false, latest = null;
+let tempHidden = false;   // "Hide until Claude needs me" from the right-click menu
+let claudeRunning = true; // any Claude Code or Claude desktop process; assumed true until the first probe
 let win, ui, tray, watcher, settings, fullscreen = false, shown = false, hideTimer, dragOff, hookNote = '';
 const ackTimers = new Map();
 
@@ -25,12 +27,12 @@ const settingsFile = () => path.join(app.getPath('userData'), 'settings.json');
 function loadSettings() {
   let s = {};
   try { s = JSON.parse(fs.readFileSync(settingsFile(), 'utf8')); } catch {}
-  return { char: 'blob', skin: 'coral', acc: 'none', size: 'm', mode: 'auto', sound: true, ...s };
+  return { char: 'blob', skin: 'coral', acc: 'none', size: 'm', mode: 'always', enabled: true, follow: true, sound: true, ...s };
 }
 // Settings arrive from the app window, so only known keys with known values are accepted.
 const ALLOWED = {
   char: CHARS.map((c) => c.id), skin: SKINS.map((s) => s.id), acc: ACCS.map((a) => a.id),
-  mode: ['always', 'auto', 'shy'], sound: [true, false], size: ['s', 'm', 'l'],
+  mode: ['always', 'auto', 'shy'], sound: [true, false], size: ['s', 'm', 'l'], enabled: [true, false], follow: [true, false],
 };
 function save(patch) {
   for (const k of Object.keys(patch)) if (k !== 'pos' && !(ALLOWED[k] || []).includes(patch[k])) delete patch[k];
@@ -55,14 +57,22 @@ function emit() {
   updateVisibility(list);
 }
 function updateVisibility(list = [...map.values()]) {
-  const alert = sessions.unacked(list).length > 0;
-  const want = alert || settings.mode === 'always' || (settings.mode === 'auto' && !fullscreen);
+  const want = wantVisible(list);
   if (want === shown || !win) return;
   shown = want;
   clearTimeout(hideTimer);
   if (want) { win.showInactive(); win.setAlwaysOnTop(true, 'screen-saver'); win.webContents.send('vis', true); }
   else { win.webContents.send('vis', false); hideTimer = setTimeout(() => win.hide(), 320); }
 }
+// Off means off. Otherwise an alert always shows; then a manual hide, then "only while Claude Code is open", then the mode.
+function wantVisible(list) {
+  if (!settings.enabled) return false;
+  if (sessions.unacked(list).length > 0) return true;
+  if (tempHidden) return false;
+  if (settings.follow && !claudeRunning && !list.length) return false;
+  return settings.mode === 'always' || (settings.mode === 'auto' && !fullscreen);
+}
+function setHidden(v) { tempHidden = v; buildMenu(); emit(); }
 function ack(id) {
   for (const s of map.values()) if (!id || s.id === id) s.acked = true;
   emit();
@@ -71,6 +81,7 @@ function onEvent(ev) {
   const hit = sessions.apply(map, ev);
   sessions.prune(map);
   if (hit) {
+    if (tempHidden) { tempHidden = false; buildMenu(); }
     win.webContents.send('chime', hit.state);
     clearTimeout(ackTimers.get(hit.id));
     // "done" clears itself; "needs you" stays until you deal with it
@@ -85,6 +96,14 @@ function startServer() {
     // Only Claude Code's hook client may post: exact JSON type, no browser Origin, loopback Host (blocks CSRF and DNS rebinding).
     const type = String(req.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
     const local = req.headers.host === `127.0.0.1:${hooks.PORT}` || req.headers.host === `localhost:${hooks.PORT}`;
+    if (req.method === 'GET' && req.url === '/state' && local && !req.headers.origin) { // for troubleshooting: what Pip currently believes
+      const list = [...map.values()];
+      res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({
+        version: app.getVersion(), visible: shown, enabled: settings.enabled, mode: settings.mode, follow: settings.follow, tempHidden, fullscreen, claudeRunning,
+        sessions: list.map((s) => ({ name: s.name, state: s.state, acked: s.acked })),
+      }));
+      return;
+    }
     if (req.method !== 'POST' || req.url !== '/hook' || type !== 'application/json' || req.headers.origin || !local) {
       res.writeHead(req.url === '/health' ? 200 : 404).end('pip'); return;
     }
@@ -102,12 +121,12 @@ function startServer() {
 function startWatcher() {
   if (process.platform !== 'win32') return;
   const ps = `$t=Add-Type -MemberDefinition '[DllImport("shell32.dll")] public static extern int SHQueryUserNotificationState(out int s);' -Name Q -Namespace Pip -PassThru;` +
-    `while($true){$s=0;[void]$t::SHQueryUserNotificationState([ref]$s);[Console]::Out.WriteLine($s);Start-Sleep -Milliseconds 1500}`;
+    `while($true){$s=0;[void]$t::SHQueryUserNotificationState([ref]$s);$c=@(Get-Process claude -ErrorAction SilentlyContinue).Count;[Console]::Out.WriteLine("$s $c");Start-Sleep -Milliseconds 2000}`;
   watcher = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-Command', ps], { windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] });
   watcher.stdout.on('data', (d) => {
-    const n = parseInt(String(d).trim().split(/\s+/).pop(), 10);
-    const fs_ = n >= 2 && n <= 4;
-    if (fs_ !== fullscreen) { fullscreen = fs_; updateVisibility(); }
+    const [n, c] = String(d).trim().split(/\r?\n/).pop().split(' ').map(Number);
+    const fs_ = n >= 2 && n <= 4, run = c > 0;
+    if (fs_ !== fullscreen || run !== claudeRunning) { fullscreen = fs_; claudeRunning = run; emit(); }
   });
   watcher.on('error', () => {});
 }
@@ -123,6 +142,9 @@ function buildMenu() {
   const radio = (key, items) => items.map((i) => ({ label: i.name, type: 'radio', checked: settings[key] === i.id, click: () => save({ [key]: i.id }) }));
   const menu = Menu.buildFromTemplate([
     { label: 'Open Pip', click: showUi },
+    tempHidden || !settings.enabled
+      ? { label: 'Show Pip', click: () => { tempHidden = false; save({ enabled: true }); } }
+      : { label: 'Hide until Claude needs me', click: () => setHidden(true) },
     { type: 'separator' },
     { label: 'Character', submenu: radio('char', CHARS) },
     { label: 'Colour', submenu: radio('skin', SKINS) },
@@ -216,7 +238,7 @@ function createWindow() {
 
 ipcMain.on('ready', () => emit());
 ipcMain.on('ui', showUi);
-ipcMain.on('save', (_e, patch) => { if (patch && typeof patch === 'object') { delete patch.pos; save({ ...patch }); } });
+ipcMain.on('save', (_e, patch) => { if (patch && typeof patch === 'object') { delete patch.pos; tempHidden = false; save({ ...patch }); } });
 ipcMain.on('login', (_e, on) => setLogin(on));
 ipcMain.on('hooks', (_e, action) => (action === 'remove' ? removeHooks() : installHooks()));
 ipcMain.on('forget', () => { map.clear(); emit(); });
@@ -240,6 +262,8 @@ app.whenReady().then(() => {
   createWindow();
   startServer();
   startWatcher();
+  // First run only: start with Windows so Pip is there whenever Claude Code is. It is a normal setting afterwards.
+  if (!settings.loginSet) { settings.loginSet = true; setLogin(true); save({}); }
   if (!process.argv.includes('--hidden')) showUi();
   checkUpdate();
   setInterval(checkUpdate, 6 * 60 * 60 * 1000);

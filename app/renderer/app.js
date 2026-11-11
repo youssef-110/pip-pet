@@ -11,6 +11,7 @@ const LABEL = { working: 'working', done: 'done', needs: 'needs you', error: 'er
 function render() {
   const { settings: st, bubble: b, sessions: list } = S;
   document.documentElement.style.setProperty('--pet', { s: '112px', m: '150px', l: '200px' }[st.size] || '150px');
+  petEl.classList.toggle('rim', PipPet.palette(st.skin).ink !== '#261c2c'); // dark pets get a light edge so they show on dark screens
   const key = st.char + '/' + st.acc;
   if (char !== key) { PipPet.mount(petEl, { char: st.char, skin: st.skin, acc: st.acc }); char = key; }
   PipPet.skin(petEl, st.skin);
@@ -67,15 +68,24 @@ for (const n of [petEl, dotsEl]) { n.addEventListener('mouseenter', setHover(tru
 
 petEl.addEventListener('pointerdown', (e) => {
   if (e.button !== 0) return;
-  down = { x: e.screenX, y: e.screenY, moved: false };
+  down = { x: e.screenX, y: e.screenY, moved: false, lastX: e.screenX, sway: 0 };
   petEl.setPointerCapture(e.pointerId);
 });
 petEl.addEventListener('pointermove', (e) => {
-  if (down && !down.moved && Math.hypot(e.screenX - down.x, e.screenY - down.y) > 5) { down.moved = true; pip.drag(true); }
+  if (!down) return;
+  if (!down.moved && Math.hypot(e.screenX - down.x, e.screenY - down.y) > 5) { down.moved = true; pip.drag(true); petEl.classList.add('dragging'); }
+  // being carried: the body swings against the direction of travel
+  down.sway = Math.max(-22, Math.min(22, down.sway * 0.7 - (e.screenX - down.lastX) * 0.9));
+  down.lastX = e.screenX;
+  petEl.style.setProperty('--sway', down.sway.toFixed(1));
 });
 petEl.addEventListener('pointerup', () => {
   if (!down) return;
-  if (down.moved) pip.drag(false);
+  if (down.moved) {
+    pip.drag(false);
+    petEl.classList.remove('dragging'); petEl.classList.add('landed'); petEl.style.setProperty('--sway', 0);
+    setTimeout(() => petEl.classList.remove('landed'), 600);
+  }
   else { PipPet.pet(petEl); chime('boop'); if (S.bubble) pip.ack(S.bubble.id); }
   down = null;
 });

@@ -50,6 +50,8 @@ function render() {
   $('update').hidden = !S.info.latest;
   if (S.info.latest) $('update').textContent = `Update to ${S.info.latest}`;
   $('sound').setAttribute('aria-checked', !!st.sound);
+  $('enabled').setAttribute('aria-checked', !!st.enabled);
+  $('follow').setAttribute('aria-checked', !!st.follow);
   $('login').setAttribute('aria-checked', !!S.info.login);
   $('version').textContent = 'Version ' + S.info.version;
 
@@ -86,6 +88,8 @@ $('moods').addEventListener('click', (e) => {
 });
 $('modes').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) pip.save({ mode: b.dataset.id }); });
 $('sizes').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) pip.save({ size: b.dataset.id }); });
+$('enabled').addEventListener('click', () => pip.save({ enabled: !S.settings.enabled }));
+$('follow').addEventListener('click', () => pip.save({ follow: !S.settings.follow }));
 $('sound').addEventListener('click', () => pip.save({ sound: !S.settings.sound }));
 $('login').addEventListener('click', () => pip.login(!S.info.login));
 $('hooks-install').addEventListener('click', () => pip.hooks('install'));
