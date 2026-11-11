@@ -36,14 +36,15 @@
   }
 
   // sq: square pixel eyes. brow: stern eyebrows. cheek: blush.
-  const face = ({ ey = 108, dx = 22, my = ey + 14, sq = false, brow = false, cheek = true }, u) => `
+  // iris: a colour gives the eye a white, an iris and a pupil instead of the plain bead
+  const face = ({ ey = 108, dx = 22, my = ey + 14, sq = false, brow = false, cheek = true, iris = '' }, u) => `
     <g class="face">
       ${cheek ? `<ellipse class="cheek" cx="${100 - dx - 14}" cy="${ey + 13}" rx="11" ry="7" fill="url(#c${u})"/><ellipse class="cheek" cx="${100 + dx + 14}" cy="${ey + 13}" rx="11" ry="7" fill="url(#c${u})"/>` : ''}
       <g class="eyes">${[100 - dx, 100 + dx].map((x, i) => `
-        <g class="eye-open">${sq ? `<rect x="${x - 6.5}" y="${ey - 8}" width="13" height="16" rx="2"/>` : `<ellipse cx="${x}" cy="${ey}" rx="7.2" ry="9.6"/>`}<circle class="glint" cx="${x + 2.4}" cy="${ey - 3.8}" r="2.7"/><circle class="glint" cx="${x - 2.6}" cy="${ey + 3.8}" r="1.2"/></g>
+        <g class="eye-open">${iris ? `<ellipse cx="${x}" cy="${ey}" rx="8.4" ry="8.8" fill="#fff"/><circle cx="${x}" cy="${ey + 0.5}" r="5.4" fill="${iris}"/><circle cx="${x}" cy="${ey + 0.5}" r="2.6" fill="#1d1820"/>` : sq ? `<rect x="${x - 6.5}" y="${ey - 8}" width="13" height="16" rx="2"/>` : `<ellipse cx="${x}" cy="${ey}" rx="7.2" ry="9.6"/>`}<circle class="glint" cx="${x + 2.4}" cy="${ey - 3.8}" r="2.7"/><circle class="glint" cx="${x - 2.6}" cy="${ey + 3.8}" r="1.2"/></g>
         <path class="eye-happy" d="M${x - 8.5} ${ey + 3}q8.5 -12 17 0"/>
         <path class="eye-shut" d="M${x - 7.5} ${ey}q7.5 5.5 15 0"/>
-        ${brow ? `<path class="brow" d="M${x + (i ? 11 : -11)} ${ey - 15}L${x + (i ? -8 : 8)} ${ey - 9}"/>` : ''}`).join('')}
+        ${brow === 'flat' ? `<path class="brow soft" d="M${x - 8} ${ey - 13}q8 -4 16 0"/>` : brow ? `<path class="brow" d="M${x + (i ? 11 : -11)} ${ey - 15}L${x + (i ? -8 : 8)} ${ey - 9}"/>` : ''}`).join('')}
       </g>
       <path class="m-smile" d="M93 ${my}q7 7 14 0"/>
       <path class="m-open" d="M90 ${my - 1}q10 15 20 0z"/>
@@ -91,12 +92,15 @@
     }),
     fig({
       id: 'zuck', name: 'Zuck', blurb: 'A parody of a certain social network founder. Does not blink. Definitely human.',
-      dark: true, face: { dx: 17, my: 88 },
-      back: () => `<circle cx="58" cy="70" r="7" fill="#e9b999"/><circle cx="142" cy="70" r="7" fill="#e9b999"/>`,
-      body: (B) => `${FIG.legs}<rect x="91" y="92" width="18" height="14" fill="#e9b999"/>${FIG.torso(B)}<path fill="#f1c5a6" d="M89 96h22q-2 12 -11 12q-9 0 -11 -12z"/>
-        <path d="M84 100q16 26 32 0" fill="none" stroke="#E0A92B" stroke-width="3" stroke-linecap="round"/>
-        ${FIG.head('#f1c5a6')}<path fill="#6b4a35" d="M57 60q-5 -34 29 -36q6 -6 14 -2q8 -5 16 0q32 2 27 38q-3 -9 -8 -9q-1 -8 -10 -6q-4 -8 -12 -4q-6 -8 -14 -2q-8 -6 -14 2q-10 -2 -12 8q-9 0 -16 11z"/>`,
-      arms: ['l', 'r'].map((k) => { const x = k === 'l' ? 54 : 129; return `<g class="arm arm-${k}"><rect x="${x}" y="101" width="17" height="22" rx="8"/><rect class="skinarm" x="${x + 1.5}" y="119" width="14" height="29" rx="7"/></g>`; }).join(''),
+      dark: true, gloss: [0, 0, 0, 0, 0], face: { ey: 70, dx: 17, my: 90, iris: '#4f86c6', brow: 'flat' },
+      back: (B) => `<circle cx="58" cy="72" r="7.5" fill="#eac1a6"/><circle cx="142" cy="72" r="7.5" fill="#eac1a6"/><path fill="${B}" d="M66 104q34 -26 68 0v10H66z"/>`,
+      body: (B) => `<rect x="77" y="144" width="18" height="34" rx="6" fill="#3d5a85"/><rect x="105" y="144" width="18" height="34" rx="6" fill="#3d5a85"/>
+        <ellipse cx="85" cy="177" rx="14" ry="6.5" fill="#f2f2f5"/><ellipse cx="115" cy="177" rx="14" ry="6.5" fill="#f2f2f5"/>
+        <rect x="91" y="92" width="18" height="14" fill="#eac1a6"/>${FIG.torso(B)}<path fill="#9a9da4" d="M87 96h26l5 58H82z"/><path fill="#f3d0b8" d="M90 96h20q-2 9 -10 9q-8 0 -10 -9z"/>
+        <path d="M86 100v22M114 100v22" stroke="#f2f2f5" stroke-width="2.2" stroke-linecap="round"/>
+        ${FIG.head('#f3d0b8')}<path fill="#6e4f3a" d="M57 64q-7 -38 30 -40q13 -5 26 0q37 2 30 40q-2 -13 -8 -17q-4 4 -9 0q-5 4 -10 0q-5 4 -10 0q-5 4 -10 0q-5 4 -10 0q-5 4 -9 0q-6 4 -10 17z"/>`,
+      front: () => `<path d="M97 79q3 4 6 0" fill="none" stroke="#d6a488" stroke-width="2.2" stroke-linecap="round"/>`,
+      arms: ['l', 'r'].map((k) => { const x = k === 'l' ? 54 : 129; return `<g class="arm arm-${k}"><rect x="${x}" y="101" width="17" height="40" rx="8.5"/><circle class="skinarm" cx="${x + 8.5}" cy="143" r="7"/></g>`; }).join(''),
     }),
     fig({
       id: 'kage', name: 'Kage', blurb: 'A ninja. You will not hear it arrive, only the chime when your session is done.',

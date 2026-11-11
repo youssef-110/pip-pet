@@ -50,7 +50,9 @@
 .pip[data-char="spark"] .arm { transform-origin: 50% 50%; }
 .pip .brow { fill: none; stroke: #261c2c; stroke-width: 4; stroke-linecap: round; }
 .pip .chrome { fill: #b4bac8; }
-.pip .skinarm { fill: #f1c5a6; }
+.pip .brow.soft { stroke: #6e4f3a; stroke-width: 2.8; }
+.pip[data-char="zuck"] .glint + .glint { display: none; }
+.pip .skinarm { fill: #f3d0b8; }
 /* Zuck: stands perfectly still, stares, and blinks once in a long while. A slow head scan replaces breathing. */
 .pip[data-char="zuck"][data-mood="idle"] .wrap { animation: pip-scan 7s cubic-bezier(.77, 0, .175, 1) infinite; }
 .pip[data-char="zuck"] .eye-open { animation: pip-blink 14s infinite; }
