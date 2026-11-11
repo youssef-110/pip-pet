@@ -1,0 +1,25 @@
+html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; user-select: none; font: 13px/1.35 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; color: #2b2320; }
+#stage { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 6px; box-sizing: border-box;
+  opacity: 0; transform: translateY(46px) scale(.9); transform-origin: 50% 100%; transition: opacity .22s ease, transform .3s cubic-bezier(.5, 0, .8, .4); }
+#stage.in { opacity: 1; transform: none; transition: opacity .2s ease, transform .5s cubic-bezier(.2, 1.5, .4, 1); }
+#pet { width: 150px; height: 150px; cursor: grab; flex: none; }
+#pet:active { cursor: grabbing; }
+
+#bubble { max-width: 252px; margin-bottom: 4px; padding: 10px 14px 11px; background: #fffaf2; border-radius: 16px; box-shadow: 0 6px 22px rgba(43, 35, 32, .2), 0 0 0 1px rgba(43, 35, 32, .08);
+  position: relative; cursor: pointer; animation: pop .36s cubic-bezier(.2, 1.5, .4, 1); transform-origin: 50% 100%; }
+#bubble::after { content: ''; position: absolute; left: 50%; bottom: -6px; width: 13px; height: 13px; margin-left: -6px; background: #fffaf2; transform: rotate(45deg); border-radius: 0 0 3px 0; box-shadow: 1px 1px 0 rgba(43, 35, 32, .08); }
+#bubble[hidden] { display: none; }
+#bubble b { display: block; font-size: 14px; font-weight: 650; overflow-wrap: anywhere; }
+#bubble span { display: block; color: #6f635a; overflow-wrap: anywhere; }
+#bubble .row { display: flex; gap: 8px; align-items: baseline; justify-content: space-between; white-space: nowrap; }
+#bubble .row i { font-style: normal; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+#bubble .row span { flex: none; font-size: 12px; }
+#bubble.needs b, #bubble.error b { color: #b5472b; }
+@keyframes pop { from { opacity: 0; transform: scale(.6) translateY(10px); } }
+
+#dots { display: flex; gap: 5px; height: 9px; margin-top: 2px; padding: 3px 8px; }
+#dots i { width: 7px; height: 7px; border-radius: 50%; background: #b9b0a3; box-shadow: 0 0 0 1.5px rgba(255, 250, 242, .9); }
+#dots i.working { background: #e8a04c; animation: pulse .9s ease-in-out infinite alternate; }
+#dots i.done { background: #5c9a6b; }
+#dots i.needs, #dots i.error { background: #d9482b; animation: pulse .45s ease-in-out infinite alternate; }
+@keyframes pulse { to { transform: scale(.6); opacity: .6; } }

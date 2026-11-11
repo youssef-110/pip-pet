@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8"><title>Pip character sheet</title>
+<link rel="stylesheet" href="../app/renderer/pet.css">
+<style>body{margin:0;background:#f6f3f7;font:600 15px system-ui;color:#261c2c}
+.g{display:grid;grid-template-columns:repeat(8,150px);gap:6px 10px;padding:28px;width:max-content}
+.g div{width:150px;height:150px}.g p{margin:0 0 14px;text-align:center}</style>
+<div class="g" id="g"></div>
+<script src="../app/renderer/pet.js"></script>
+<script>
+const {CHARS,SKINS,ACCS}=PipPet,g=document.getElementById('g');
+const moods=['idle','working','done','needs','sleep'];
+const q=new URLSearchParams(location.search);
+for(let r=0;r<(+q.get('rows')||5);r++)CHARS.forEach((c,i)=>{const w=document.createElement('section'),d=document.createElement('div'),p=document.createElement('p');
+PipPet.mount(d,{char:c.id,skin:SKINS[(i+r*3)%SKINS.length].id,acc:r==0?'none':ACCS[(i+r)%ACCS.length].id,mood:q.get('mood')||moods[r%5]});
+p.textContent=r==0?c.name:'';w.append(d,p);g.append(w)});
+</script>

@@ -1,0 +1,121 @@
+/* Pip characters: shared by the desktop app and the landing page. */
+.pip { width: 100%; height: 100%; display: block; overflow: visible; }
+.pip .arm, .pip .foot, .pip .deep { fill: var(--deep); }
+.pip .g-light { stop-color: var(--light); } .pip .g-body { stop-color: var(--body); } .pip .g-dark { stop-color: var(--dark); }
+.pip .g-accent { stop-color: var(--accent); } .pip .g-accent2 { stop-color: var(--accent2); }
+.pip .g-cheek { stop-color: var(--cheek); stop-opacity: .8; } .pip .g-cheek0 { stop-color: var(--cheek); stop-opacity: 0; }
+.pip .belly { fill: var(--belly); }
+.pip .gloss { fill: #fff; opacity: .34; }
+.pip .inkfill { fill: var(--ink); }
+.pip .nosepink { fill: var(--cheek); }
+.pip .shadow { transform-box: fill-box; transform-origin: center; }
+.pip .stem { fill: none; stroke: var(--deep); stroke-width: 5; stroke-linecap: round; }
+.pip .tail { fill: none; stroke: var(--dark); stroke-width: 13; stroke-linecap: round; transform-box: fill-box; transform-origin: 0 100%; animation: pip-wag 2.8s ease-in-out infinite; }
+.pip .gills path { fill: none; stroke-width: 9.5; stroke-linecap: round; }
+.pip .gills { transform-box: fill-box; animation: pip-gill 3s ease-in-out infinite; }
+.pip .gl { transform-origin: 100% 50%; } .pip .gr { transform-origin: 0 50%; animation-direction: reverse; }
+.pip .ear { transform-box: fill-box; transform-origin: 50% 100%; animation: pip-ear 4.6s ease-in-out infinite; }
+.pip .er { animation-delay: -.4s; animation-direction: reverse; }
+.pip .whisk { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; opacity: .45; }
+.pip .m-open, .pip .m-o { fill: var(--ink); }
+.pip .eye-open { fill: var(--ink); transform-box: fill-box; transform-origin: center; animation: pip-blink 5.4s infinite; }
+.pip .glint { fill: var(--glint); }
+.pip .eye-happy, .pip .eye-shut, .pip .m-smile { fill: none; stroke: var(--ink); stroke-width: 4.2; stroke-linecap: round; }
+.pip .eye-happy, .pip .eye-shut, .pip .m-open, .pip .m-o, .pip .laptop, .pip .zzz, .pip .bang, .pip .spark, .pip .heart { display: none; }
+.pip .eyes { transform: translate(calc(var(--lx, 0) * 5px), calc(var(--ly, 0) * 4px)); transition: transform .14s ease-out; }
+.pip .wrap { transform-box: fill-box; transform-origin: 50% 100%; animation: pip-breathe 3.6s ease-in-out infinite; }
+.pip .arm { transform-box: fill-box; transform-origin: 50% 100%; transition: transform .3s cubic-bezier(.3, 1.4, .5, 1); }
+.pip .sprout, .pip .antenna { transform-box: fill-box; transform-origin: 40% 100%; animation: pip-sway 4.2s ease-in-out infinite; }
+.pip .lap-screen { fill: #e4dfe6; } .pip .lap-shine { fill: #fff; opacity: .5; } .pip .lap-base { fill: #b5aebb; } .pip .lap-logo { transform-box: fill-box; transform-origin: center; }
+.pip .zzz text { font: 800 20px ui-rounded, 'Segoe UI', sans-serif; fill: var(--dark); }
+.pip .bang path { stroke: #fff; stroke-width: 5.5; stroke-linecap: round; } .pip .bang .dot { fill: #fff; }
+.pip .bang { transform-box: fill-box; transform-origin: 50% 100%; }
+.pip .spark { fill: var(--accent); transform-box: fill-box; transform-origin: center; }
+.pip .heart { fill: #f0567a; transform-box: fill-box; transform-origin: center; }
+.pip[data-acc="crown"] .sprout, .pip[data-acc="party"] .sprout, .pip[data-acc="crown"] .antenna, .pip[data-acc="party"] .antenna, .pip[data-acc="headphones"] .deep { display: none; }
+
+/* robot: glowing face on a dark screen */
+.pip[data-char="robot"] .cheek, .pip[data-char="robot"] .glint { display: none; }
+.pip[data-char="robot"] .eye-open, .pip[data-char="robot"] .m-open, .pip[data-char="robot"] .m-o { fill: #b9f0ff; }
+.pip[data-char="robot"] .eye-happy, .pip[data-char="robot"] .eye-shut, .pip[data-char="robot"] .m-smile { stroke: #b9f0ff; }
+.pip[data-char="robot"] .glasses { stroke: #b9f0ff; }
+/* penguin: the beak is the mouth */
+.pip[data-char="penguin"] .m-smile, .pip[data-char="penguin"] .m-open, .pip[data-char="penguin"] .m-o { display: none !important; }
+.pip[data-char="penguin"] .foot { fill: var(--accent2); }
+
+/* per-character idle */
+.pip[data-char="ghost"] .wrap { animation: pip-float 3.2s ease-in-out infinite; }
+.pip[data-char="ghost"] .shadow { animation: pip-shadow 3.2s ease-in-out infinite; }
+.pip[data-char="ghost"] .m-smile { display: none; } .pip[data-char="ghost"] .m-o { display: block; }
+.pip[data-char="robot"] .bulb { animation: pip-bulb 2.4s ease-in-out infinite; }
+
+/* working: head down, laptop out, hands peeking over the lid */
+.pip[data-mood="working"] .laptop { display: block; }
+.pip[data-mood="working"] .wrap { animation: pip-type .46s ease-in-out infinite; }
+.pip[data-mood="working"] .eyes { transform: translateY(6px); }
+.pip[data-mood="working"] .eye-open { animation: none; transform: scaleY(.72); }
+.pip[data-mood="working"] .arm-l { animation: pip-tap-l .32s ease-in-out infinite alternate; }
+.pip[data-mood="working"] .arm-r { animation: pip-tap-r .32s ease-in-out infinite alternate-reverse; }
+.pip[data-mood="working"] .lap-logo { animation: pip-bulb 1.2s ease-in-out infinite; }
+.pip[data-mood="done"] .ear { animation-duration: .5s; }
+.pip[data-mood="working"] .bulb { animation-duration: .5s; }
+.pip[data-mood="working"] .tail { animation-duration: 1s; }
+
+/* done: hop, arms up, sparkles */
+.pip[data-mood="done"] .wrap { animation: pip-hop 1.05s cubic-bezier(.3, 0, .4, 1) infinite; }
+.pip[data-mood="done"] .shadow { animation: pip-shadow 1.05s cubic-bezier(.3, 0, .4, 1) infinite; }
+.pip[data-mood="done"] .eye-open, .pip[data-mood="done"] .m-smile, .pip[data-mood="done"] .m-o { display: none; }
+.pip[data-mood="done"] .eye-happy, .pip[data-mood="done"] .m-open { display: block; }
+.pip[data-mood="done"] .arm-l { transform: translate(-8px, -36px) rotate(-28deg); }
+.pip[data-mood="done"] .arm-r { transform: translate(8px, -36px) rotate(28deg); }
+.pip[data-mood="done"] .spark { display: block; animation: pip-spark 1.4s ease-out infinite; }
+.pip[data-mood="done"] .spark1 { animation-delay: .2s; } .pip[data-mood="done"] .spark2 { animation-delay: .45s; }
+.pip[data-mood="done"] .spark3 { animation-delay: .7s; } .pip[data-mood="done"] .spark4 { animation-delay: .95s; }
+.pip[data-mood="done"] .gills, .pip[data-mood="done"] .tail { animation-duration: .5s; }
+
+/* needs you (and errors): wave, tilt, bang */
+.pip[data-mood="needs"] .wrap, .pip[data-mood="error"] .wrap { animation: pip-tilt 1.2s ease-in-out infinite; }
+.pip[data-mood="needs"] .bang, .pip[data-mood="error"] .bang { display: block; animation: pip-bang .6s cubic-bezier(.3, 0, .4, 1) infinite alternate; }
+.pip[data-mood="needs"] .m-smile, .pip[data-mood="error"] .m-smile { display: none; }
+.pip[data-mood="needs"] .m-o, .pip[data-mood="error"] .m-o { display: block; }
+.pip[data-mood="needs"] .arm-r, .pip[data-mood="error"] .arm-r { animation: pip-wave .5s ease-in-out infinite alternate; }
+
+/* sleep */
+.pip[data-mood="sleep"] .wrap { animation-duration: 5.5s; }
+.pip[data-mood="sleep"] .eye-open { display: none; } .pip[data-mood="sleep"] .eye-shut { display: block; }
+.pip[data-mood="sleep"] .eyes { transform: translateY(3px); }
+.pip[data-mood="sleep"] .zzz { display: block; }
+.pip[data-mood="sleep"] .zzz text { animation: pip-zzz 3s ease-in-out infinite; }
+.pip[data-mood="sleep"] .zzz text:nth-child(2) { animation-delay: .5s; } .pip[data-mood="sleep"] .zzz text:nth-child(3) { animation-delay: 1s; }
+.pip[data-mood="sleep"] .sprout { animation-duration: 8s; }
+
+/* petted (class on the mount element) */
+.petted .pip .wrap { animation: pip-squish .9s cubic-bezier(.3, 1.5, .5, 1) 1; }
+.petted .pip .eye-open, .petted .pip .eye-shut { display: none; } .petted .pip .eye-happy { display: block; }
+.petted .pip .heart { display: block; animation: pip-heart .95s ease-out 1 both; }
+.petted .pip .heart1 { animation-delay: .12s; } .petted .pip .heart2 { animation-delay: .24s; }
+
+@keyframes pip-breathe { 50% { transform: scale(1.03, .97); } }
+@keyframes pip-blink { 0%, 46%, 50%, 100% { transform: scaleY(1); } 48% { transform: scaleY(.08); } }
+@keyframes pip-sway { 50% { transform: rotate(9deg); } }
+@keyframes pip-ear { 50% { transform: rotate(6deg); } }
+@keyframes pip-wag { 50% { transform: rotate(14deg); } }
+@keyframes pip-gill { 50% { transform: rotate(7deg) scaleX(.94); } }
+@keyframes pip-float { 50% { transform: translateY(-9px); } }
+@keyframes pip-shadow { 50% { transform: scale(.72); opacity: .07; } }
+@keyframes pip-bulb { 50% { opacity: .35; transform: scale(.85); } }
+@keyframes pip-type { 50% { transform: scale(1.012, .985) translateY(1px); } }
+@keyframes pip-tap-l { from { transform: translate(27px, 13px); } to { transform: translate(27px, 4px); } }
+@keyframes pip-tap-r { from { transform: translate(-27px, 13px); } to { transform: translate(-27px, 4px); } }
+@keyframes pip-hop { 0%, 100% { transform: scale(1.08, .9); } 18% { transform: scale(.94, 1.08) translateY(-6px); } 48% { transform: scale(1, 1) translateY(-26px); } 82% { transform: scale(.96, 1.05) translateY(-4px); } }
+@keyframes pip-spark { 0% { transform: scale(0) rotate(0); opacity: 0; } 30% { transform: scale(1.2) rotate(40deg); opacity: 1; } 100% { transform: scale(0) rotate(120deg); opacity: 0; } }
+@keyframes pip-tilt { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+@keyframes pip-bang { from { transform: translateY(0) scale(1); } to { transform: translateY(-9px) scale(1.08); } }
+@keyframes pip-wave { from { transform: translate(8px, -34px) rotate(8deg); } to { transform: translate(8px, -34px) rotate(42deg); } }
+@keyframes pip-zzz { 0% { opacity: 0; transform: translate(-6px, 8px); } 40% { opacity: 1; } 100% { opacity: 0; transform: translate(8px, -12px); } }
+@keyframes pip-squish { 0% { transform: scale(1, 1); } 25% { transform: scale(1.16, .8); } 60% { transform: scale(.95, 1.07); } 100% { transform: scale(1, 1); } }
+@keyframes pip-heart { 0% { transform: translateY(14px) scale(0); opacity: 0; } 35% { transform: translateY(0) scale(1.25); opacity: 1; } 100% { transform: translateY(-26px) scale(.8); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pip *, .petted .pip * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}
