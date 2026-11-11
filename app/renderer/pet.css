@@ -32,7 +32,7 @@
 .pip .bang { transform-box: fill-box; transform-origin: 50% 100%; }
 .pip .spark { fill: var(--accent); transform-box: fill-box; transform-origin: center; }
 .pip .heart { fill: #f0567a; transform-box: fill-box; transform-origin: center; }
-.pip[data-acc="crown"] .sprout, .pip[data-acc="party"] .sprout, .pip[data-acc="crown"] .antenna, .pip[data-acc="party"] .antenna, .pip[data-acc="headphones"] .deep { display: none; }
+.pip[data-acc="crown"] .sprout, .pip[data-acc="party"] .sprout, .pip[data-acc="crown"] .antenna, .pip[data-acc="party"] .antenna, .pip[data-char="robot"][data-acc="headphones"] .deep { display: none; }
 
 /* robot: glowing face on a dark screen */
 .pip[data-char="robot"] .cheek, .pip[data-char="robot"] .glint { display: none; }

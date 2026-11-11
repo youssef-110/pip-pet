@@ -19,7 +19,7 @@ function png(size) {
         // light from the top left, like the SVG characters
         const t = Math.min(1, Math.hypot(u - 0.36, v - 0.34) / 0.62), lerp = (a, b, k) => a + (b - a) * k;
         const shade = t < 0.5 ? [248, 180, 160].map((x, i) => lerp(x, [240, 118, 90][i], t * 2)) : [240, 118, 90].map((x, i) => lerp(x, [190, 92, 80][i], t * 2 - 1));
-        const c = !body ? [252, 222, 212] : glint ? [255, 255, 255] : eye(0.35) || eye(0.65) ? [38, 28, 44] : shade;
+        const c = !body ? [150, 78, 84] : glint ? [255, 255, 255] : eye(0.35) || eye(0.65) ? [38, 28, 44] : shade;
         r += c[0]; g += c[1]; b += c[2]; a++;
       }
       const o = y * (size * 4 + 1) + 1 + x * 4, n = SS * SS;

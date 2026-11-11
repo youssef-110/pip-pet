@@ -54,7 +54,7 @@
       id: 'blob', name: 'Pip', blurb: 'The original. A small horned critter who takes your sessions very seriously.',
       top: 60, hw: 60, face: { ey: 106, dx: 24 }, gloss: [66, 80, 17, 8, -28], feet: true,
       back: (B) => `<path class="tail" d="M152 156q30 2 30 -26"/>
-        <path class="belly" d="M58 74q-8 -30 8 -38q16 8 16 30z"/><path class="belly" d="M142 74q8 -30 -8 -38q-16 8 -16 30z"/>`,
+        <path class="deep" d="M58 74q-8 -30 8 -38q16 8 16 30z"/><path class="deep" d="M142 74q8 -30 -8 -38q-16 8 -16 30z"/>`,
       body: (B) => `<rect fill="${B}" x="40" y="60" width="120" height="112" rx="48"/>`,
       front: () => `<ellipse class="belly" cx="100" cy="150" rx="34" ry="20"/>`,
     },
