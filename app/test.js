@@ -57,3 +57,12 @@ test('hook install is idempotent and uninstall leaves other hooks alone', () => 
   assert.deepEqual(withoutHooks(once), base);
   assert.deepEqual(withoutHooks(withHooks({ model: 'x' })), { model: 'x' });
 });
+
+test('every character draws in every outfit', () => {
+  const { CHARS, ACCS, svg } = require('./renderer/pet.js');
+  assert.equal(new Set(CHARS.map((c) => c.id)).size, CHARS.length, 'ids are unique');
+  assert.equal(CHARS[0].id, 'blob', 'Pip stays the default');
+  for (const c of CHARS) {
+    for (const a of ACCS) { const s = svg(c.id, a.id); assert.ok(!/undefined|NaN/.test(s), `${c.id}/${a.id} has a hole in its drawing`); }
+  }
+});

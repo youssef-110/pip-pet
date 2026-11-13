@@ -42,7 +42,7 @@ function render() {
     const c = CHARS.find((c) => c.id === st.char) || CHARS[0], name = $('name');
     if (name.textContent !== c.name) { name.textContent = c.name; name.classList.remove('swap'); void name.offsetWidth; name.classList.add('swap'); }
     $('blurb').textContent = c.blurb;
-    $('colour-name').textContent = (SKINS.find((s) => s.id === st.skin) || SKINS[0]).name;
+    $('colour-name').textContent = (SKINS.find((s) => s.id === st.skin) || SKINS[0]).name + (c.fixed ? `. ${c.name} keeps their own colours; this sets the theme.` : '');
     press($('swatches'), st.skin); press($('accs'), st.acc);
     theme(st.skin);
   }

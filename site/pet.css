@@ -50,16 +50,84 @@
 .pip[data-char="spark"] .arm { transform-origin: 50% 50%; }
 .pip .brow { fill: none; stroke: #261c2c; stroke-width: 4; stroke-linecap: round; }
 .pip .chrome { fill: #b4bac8; }
-.pip .brow.soft { stroke: #6e4f3a; stroke-width: 2.8; }
-.pip[data-char="zuck"] .glint + .glint { display: none; }
-.pip .skinarm { fill: #f3d0b8; }
 /* Zuck: stands perfectly still, stares, and blinks once in a long while. A slow head scan replaces breathing. */
 .pip[data-char="zuck"][data-mood="idle"] .wrap { animation: pip-scan 7s cubic-bezier(.77, 0, .175, 1) infinite; }
-.pip[data-char="zuck"] .eye-open { animation: pip-blink 14s infinite; }
+.pip[data-char="zuck"][data-face="art"] .eye-open { animation: pip-blink 14s infinite; display: block !important; }
+/* one expression for every occasion */
+.pip[data-char="zuck"][data-face="art"] .eye-happy, .pip[data-char="zuck"][data-face="art"] .eye-shut, .pip[data-char="zuck"][data-face="art"] .m-open, .pip[data-char="zuck"][data-face="art"] .m-o { display: none !important; }
+.pip[data-char="zuck"][data-face="art"] .m-smile { display: block !important; stroke: #b4685c; stroke-width: 1.7; }
+.pip[data-char="lucy"][data-face="art"] .m-smile { stroke: #d9483f; stroke-width: 2; }
+.pip[data-char="geralt"][data-face="art"] .m-smile { stroke: #7a5a4c; stroke-width: 1.8; }
+.pip[data-char="david"][data-face="art"] .m-smile { stroke-width: 2; }
 .pip .scarf { stroke-width: 9; }
 .pip[data-char="penguin"] .foot { fill: var(--accent2); }
 .pip[data-acc="crown"] .tuft, .pip[data-acc="party"] .tuft { display: none; }
 .pip[data-acc="headphones"] .ear-bolt { display: none; }
+
+/* drawn characters (data-face="art"): thin features, pupils follow the cursor inside the eye */
+.pip .look { transform: translate(calc(var(--lx, 0) * 2.6px), calc(var(--ly, 0) * 2px)); transition: transform .14s ease-out; }
+.pip[data-mood="working"] .look { transform: translateY(2.6px); }
+.pip[data-face="art"] .eye-happy, .pip[data-face="art"] .eye-shut, .pip[data-face="art"] .m-smile { stroke: #2a1c1e; stroke-width: 2.4; }
+.pip[data-face="art"] .m-open, .pip[data-face="art"] .m-o { fill: #5c2a2c; }
+
+/* Pip: the lantern on the tail says what Claude is doing */
+.pip .ptail { fill: none; stroke: var(--dark); stroke-width: 8; stroke-linecap: round; }
+.pip .lantern { transform-box: fill-box; transform-origin: 0 100%; animation: pip-wag 3.4s ease-in-out infinite; }
+.pip .orb { fill: var(--accent); transition: fill .3s ease; }
+.pip .orb.halo { opacity: .3; }
+.pip .plid { fill: none; stroke: var(--deep); stroke-width: 5.5; stroke-linecap: round; }
+.pip .fang { fill: #fff; }
+.pip .horn { fill: var(--deep); } .pip .horn-tip { fill: var(--belly); opacity: .55; }
+.pip .scarf-end { transform-box: fill-box; transform-origin: 100% 0; animation: pip-sway 3.2s ease-in-out infinite; }
+.pip[data-mood="working"] .orb { fill: #ffb23e; } .pip[data-mood="done"] .orb { fill: #4fd78b; }
+.pip[data-mood="needs"] .orb, .pip[data-mood="error"] .orb { fill: #ff5a4d; }
+.pip[data-mood="sleep"] .orb { opacity: .35; } .pip[data-mood="sleep"] .orb.halo { opacity: .1; }
+.pip[data-mood="needs"] .orb.halo, .pip[data-mood="error"] .orb.halo, .pip[data-mood="working"] .orb.halo { animation-duration: .6s; }
+.pip[data-mood="done"] .fang, .pip[data-mood="needs"] .fang, .pip[data-mood="error"] .fang, .dragging .pip .fang, .petted .pip .plid, .pip[data-mood="done"] .plid, .pip[data-mood="sleep"] .plid { display: none; }
+
+/* Pip the fox: the tail tip is the status light */
+.pip .tip { fill: var(--belly); transition: fill .3s ease; }
+.pip[data-mood="working"] .tip { fill: #ffb23e; } .pip[data-mood="done"] .tip { fill: #4fd78b; }
+.pip[data-mood="needs"] .tip, .pip[data-mood="error"] .tip { fill: #ff5a4d; }
+.pip[data-mood="working"] .plume { animation-duration: 1.2s; }
+
+/* newer pets */
+.pip .tent { fill: none; stroke: var(--dark); stroke-width: 11; stroke-linecap: round; }
+.pip .suckers { fill: none; stroke: var(--belly); stroke-width: 5; stroke-linecap: round; opacity: .8; }
+.pip .snout { fill: var(--dark); }
+.pip .grin { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+.pip .curl { stroke-width: 10; }
+.pip[data-char="duck"] .foot { fill: #f08a2c; }
+
+/* white cheese: anyone can keep a wedge; Simba eats his, three bites and then a fresh one */
+.pip .bite { fill: #000; opacity: 0; }
+.pip .crumbs { fill: #fffdf6; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.pip .nom { opacity: 0; }
+.pip[data-mood="working"] .cheese { display: none; }
+.pip .shead { transform-box: fill-box; transform-origin: 50% 100%; }
+.pip[data-char="simba"][data-acc="cheese"][data-mood="idle"] .cheese, .pip[data-char="simba"][data-acc="cheese"][data-mood="idle"] .arm { animation: pip-lift 3s cubic-bezier(.4, 0, .2, 1) infinite; }
+.pip[data-char="simba"][data-acc="cheese"][data-mood="idle"] .shead { animation: pip-nom 3s cubic-bezier(.4, 0, .2, 1) infinite; }
+.pip[data-char="simba"][data-acc="cheese"][data-mood="idle"] .nom { animation: pip-nom-mouth 3s steps(1) infinite; }
+.pip[data-char="simba"][data-acc="cheese"][data-mood="idle"] .crumbs { animation: pip-crumbs 3s ease-out infinite; }
+.pip[data-char="simba"][data-acc="cheese"][data-mood="idle"] .bite1 { animation: pip-bite1 12s steps(1) infinite; }
+.pip[data-char="simba"][data-acc="cheese"][data-mood="idle"] .bite2 { animation: pip-bite2 12s steps(1) infinite; }
+.pip[data-char="simba"][data-acc="cheese"][data-mood="idle"] .bite3 { animation: pip-bite3 12s steps(1) infinite; }
+.petted .pip .cheese, .petted .pip .shead, .petted .pip .arm, .dragging .pip .cheese, .dragging .pip .shead { animation: none !important; }
+.dragging .pip .cheese { display: none; }
+
+/* Simba */
+.pip .plume { transform-box: fill-box; transform-origin: 0 100%; animation: pip-wag 3.8s ease-in-out infinite; }
+.pip .wh { fill: none; stroke: #fffaf2; stroke-width: 1.5; stroke-linecap: round; filter: drop-shadow(0 .5px .4px rgba(40, 25, 20, .6)); }
+.pip .tongue { fill: #f08b9b; display: none; }
+.pip[data-char="simba"] .eye-happy, .pip[data-char="simba"] .eye-shut { stroke: #ecdcca; stroke-width: 2.8; }
+.pip[data-char="simba"] .m-smile { stroke: #150e0d; stroke-width: 1.8; }
+.pip[data-char="simba"] .m-open, .pip[data-char="simba"] .m-o { fill: #2c0f13; }
+.pip[data-char="simba"][data-mood="done"] .tongue, .petted .pip[data-char="simba"] .tongue { display: block; }
+.pip[data-char="simba"] .lid { transform: translateY(-9px); animation: pip-judge 9s ease-in-out infinite; }
+.pip[data-char="simba"][data-mood="working"] .lid { animation: none; transform: translateY(-2px); }
+.pip[data-char="simba"][data-mood="needs"] .lid, .pip[data-char="simba"][data-mood="error"] .lid, .dragging .pip[data-char="simba"] .lid { animation: none; }
+.pip[data-mood="done"] .plume { animation-duration: .5s; }
+.petted .pip[data-char="simba"] .m-smile { display: none; } .petted .pip[data-char="simba"] .m-open { display: block; }
 
 /* figures: arms hang from the shoulder and swing from there */
 .pip[data-kind="figure"] .arm { transform-origin: 50% 9%; fill: var(--dark); }
@@ -126,6 +194,21 @@
 .petted .pip .eye-open, .petted .pip .eye-shut { display: none; } .petted .pip .eye-happy { display: block; }
 .petted .pip .heart { display: block; animation: pip-heart .95s ease-out 1 both; }
 .petted .pip .heart1 { animation-delay: .12s; } .petted .pip .heart2 { animation-delay: .24s; }
+
+@keyframes pip-lift { 0%, 18%, 54%, 100% { transform: translateY(0); } 30%, 43% { transform: translateY(-20px); } }
+@keyframes pip-nom { 0%, 26%, 52%, 100% { transform: none; } 34% { transform: translateY(8px) rotate(-3deg); } 40% { transform: translateY(11px) rotate(2deg); } 45% { transform: translateY(5px); } 60%, 72%, 84% { transform: scale(1.025, .972); } 66%, 78%, 90% { transform: none; } }
+@keyframes pip-nom-mouth { 0%, 42%, 100% { opacity: 0; } 32% { opacity: 1; } }
+@keyframes pip-crumbs { 0%, 39% { opacity: 0; transform: none; } 41% { opacity: 1; transform: none; } 62%, 100% { opacity: 0; transform: translateY(16px) scale(1.5); } }
+@keyframes pip-bite1 { 0%, 85%, 100% { opacity: 0; } 10% { opacity: 1; } }
+@keyframes pip-bite2 { 0%, 85%, 100% { opacity: 0; } 35% { opacity: 1; } }
+@keyframes pip-bite3 { 0%, 85%, 100% { opacity: 0; } 60% { opacity: 1; } }
+@keyframes pip-judge { 0%, 58%, 100% { transform: translateY(-9px); } 66%, 88% { transform: translateY(1.5px); } }
+/* hello and goodbye (class on the mount element): a wave and a grin */
+.hello .pip .arm-r, .bye .pip .arm-r { animation: pip-wave .4s ease-in-out infinite alternate !important; }
+.hello .pip[data-kind="figure"] .arm-r, .bye .pip[data-kind="figure"] .arm-r { animation-name: pip-fig-wave !important; }
+.hello .pip .wrap, .bye .pip .wrap { animation: pip-tilt 1s ease-in-out infinite; }
+.hello .pip .m-smile, .bye .pip .m-smile, .hello .pip .laptop, .bye .pip .laptop, .hello .pip .zzz, .bye .pip .zzz, .hello .pip .eye-shut, .bye .pip .eye-shut { display: none !important; }
+.hello .pip .m-open, .bye .pip .m-open, .hello .pip .eye-open, .bye .pip .eye-open { display: block !important; }
 
 @keyframes pip-breathe { 50% { transform: scale(1.03, .97); } }
 @keyframes pip-blink { 0%, 46%, 50%, 100% { transform: scaleY(1); } 48% { transform: scaleY(.08); } }

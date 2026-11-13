@@ -1,7 +1,7 @@
 const $ = (id) => document.getElementById(id);
 const stage = $('stage'), petEl = $('pet'), bubbleEl = $('bubble'), dotsEl = $('dots');
 let S = { sessions: [], mood: 'sleep', bubble: null, settings: { char: 'blob', skin: 'coral', acc: 'none', sound: true }, note: '' };
-let char = null, hover = false, over = false, down = null;
+let char = null, hover = false, over = false, down = null, say = '', sayTimer;
 
 const el = (tag, text, cls) => { const n = document.createElement(tag); if (text != null) n.textContent = text; if (cls) n.className = cls; return n; };
 const ago = (t) => { const m = Math.floor((Date.now() - t) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m}m` : `${Math.floor(m / 60)}h ${m % 60}m`; };
@@ -11,7 +11,8 @@ const LABEL = { working: 'working', done: 'done', needs: 'needs you', error: 'er
 function render() {
   const { settings: st, bubble: b, sessions: list } = S;
   document.documentElement.style.setProperty('--pet', { s: '112px', m: '150px', l: '200px' }[st.size] || '150px');
-  petEl.classList.toggle('rim', PipPet.palette(st.skin).ink !== '#261c2c'); // dark pets get a light edge so they show on dark screens
+  const fixed = (PipPet.CHARS.find((c) => c.id === st.char) || {}).fixed;
+  petEl.classList.toggle('rim', fixed || PipPet.palette(st.skin).ink !== '#261c2c'); // dark pets get a light edge so they show on dark screens
   const key = st.char + '/' + st.acc;
   if (char !== key) { PipPet.mount(petEl, { char: st.char, skin: st.skin, acc: st.acc }); char = key; }
   PipPet.skin(petEl, st.skin);
@@ -22,6 +23,8 @@ function render() {
   bubbleEl.className = 'hit ' + (b ? b.state : '');
   if (b) {
     bubbleEl.replaceChildren(el('b', TITLE[b.state](b.name)), ...(b.msg ? [el('span', b.msg)] : []));
+  } else if (say) {
+    bubbleEl.replaceChildren(el('b', say));
   } else if (S.note) {
     bubbleEl.replaceChildren(el('span', S.note));
   } else if (hover) {
@@ -29,7 +32,7 @@ function render() {
       ? list.map((s) => { const r = el('div', null, 'row'); r.append(el('i', s.name), el('span', `${LABEL[s.state]} · ${ago(s.since)}`)); return r; })
       : [el('b', 'Nothing running'), el('span', 'Start claude in any terminal and I will keep watch.')]));
   }
-  bubbleEl.hidden = !(b || S.note || hover);
+  bubbleEl.hidden = !(b || say || S.note || hover);
 }
 
 // ---- sound: two soft sine notes, no audio files ----
@@ -48,7 +51,15 @@ function chime(kind) {
 
 // ---- wiring ----
 pip.onState((s) => { S = s; render(); });
-pip.onVis((v) => stage.classList.toggle('in', v));
+// Show and hide. When Claude just opened or closed, wave first: hello on the way in, goodbye before leaving.
+let leave;
+pip.onVis(({ on, wave }) => {
+  clearTimeout(leave); clearTimeout(sayTimer);
+  say = wave === 'hello' ? 'Hi! Claude is open, I am watching.' : wave === 'bye' ? 'Claude closed. Bye for now!' : '';
+  if (wave) { PipPet.greet(petEl, wave); if (wave === 'hello') chime('boop'); sayTimer = setTimeout(() => { say = ''; render(); }, wave === 'hello' ? 2600 : 1400); }
+  if (on) stage.classList.add('in'); else leave = setTimeout(() => stage.classList.remove('in'), wave ? 1300 : 0);
+  render();
+});
 pip.onChime(chime);
 pip.onCursor(({ x, y }) => {
   const r = petEl.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height * 0.55;

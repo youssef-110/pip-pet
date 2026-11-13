@@ -7,11 +7,12 @@ const sessions = require('./sessions');
 const hooks = require('./hooks');
 const { CHARS, SKINS, ACCS } = require('./renderer/pet.js');
 
-const W = 300, H = 340, DONE_MS = 20000;
+const W = 300, H = 340, DONE_MS = 20000, BYE_MS = 1700;
 const map = new Map();
 let hooksOk = false, latest = null;
 let tempHidden = false;   // "Hide until Claude needs me" from the right-click menu
-let claudeRunning = true; // any Claude Code or Claude desktop process; assumed true until the first probe
+let claudeRunning = process.platform !== 'win32'; // a Claude desktop window or a claude terminal session is open; the watcher reports it within two seconds
+let greet = 'hello';      // the next show or hide is a hello or a goodbye: Pip waves
 let win, ui, tray, watcher, settings, fullscreen = false, shown = false, hideTimer, dragOff, hookNote = '';
 const ackTimers = new Map();
 
@@ -61,8 +62,10 @@ function updateVisibility(list = [...map.values()]) {
   if (want === shown || !win) return;
   shown = want;
   clearTimeout(hideTimer);
-  if (want) { win.showInactive(); win.setAlwaysOnTop(true, 'screen-saver'); win.webContents.send('vis', true); }
-  else { win.webContents.send('vis', false); hideTimer = setTimeout(() => win.hide(), 320); }
+  const wave = (want ? greet === 'hello' : greet === 'bye') ? greet : '';
+  greet = '';
+  if (want) { win.showInactive(); win.setAlwaysOnTop(true, 'screen-saver'); win.webContents.send('vis', { on: true, wave }); }
+  else { win.webContents.send('vis', { on: false, wave }); hideTimer = setTimeout(() => win.hide(), wave ? BYE_MS : 320); }
 }
 // Off means off. Otherwise an alert always shows; then a manual hide, then "only while Claude Code is open", then the mode.
 function wantVisible(list) {
@@ -120,15 +123,24 @@ function startServer() {
 // ---- fullscreen watcher: Windows reports BUSY / D3D fullscreen / presentation as 2 / 3 / 4 ----
 function startWatcher() {
   if (process.platform !== 'win32') return;
-  const ps = `$t=Add-Type -MemberDefinition '[DllImport("shell32.dll")] public static extern int SHQueryUserNotificationState(out int s);' -Name Q -Namespace Pip -PassThru;` +
-    `while($true){$s=0;[void]$t::SHQueryUserNotificationState([ref]$s);$c=@(Get-Process claude -ErrorAction SilentlyContinue).Count;[Console]::Out.WriteLine("$s $c");Start-Sleep -Milliseconds 2000}`;
+  // "Claude is open" = a claude.exe in a terminal, or the desktop app with a window. The app stays in the tray after its window closes, so its processes alone do not count.
+  const name = /^\w+$/.test(process.env.PIP_WATCH || '') ? process.env.PIP_WATCH : 'claude'; // dev only: PIP_WATCH=notepad follows Notepad instead
+  const ps = `$n='${name}';$t=Add-Type -MemberDefinition '[DllImport("shell32.dll")] public static extern int SHQueryUserNotificationState(out int s);' -Name Q -Namespace Pip -PassThru;` +
+    `while($true){$s=0;[void]$t::SHQueryUserNotificationState([ref]$s);$c=@(Get-Process $n -ErrorAction SilentlyContinue | Where-Object { if ($_.Path -match 'WindowsApps|AnthropicClaude|Claude-Data') { $_.MainWindowHandle -ne 0 } else { $true } }).Count;[Console]::Out.WriteLine("$s $c");Start-Sleep -Milliseconds 1500}`;
   watcher = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-Command', ps], { windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] });
   watcher.stdout.on('data', (d) => {
     const [n, c] = String(d).trim().split(/\r?\n/).pop().split(' ').map(Number);
     const fs_ = n >= 2 && n <= 4, run = c > 0;
-    if (fs_ !== fullscreen || run !== claudeRunning) { fullscreen = fs_; claudeRunning = run; emit(); }
+    if (fs_ === fullscreen && run === claudeRunning) return;
+    if (run !== claudeRunning) {
+      greet = run ? 'hello' : 'bye';
+      // Claude closed: sessions that never sent SessionEnd (a closed terminal) are over. Unread alerts stay.
+      if (!run) for (const [id, s] of map) if (s.acked) map.delete(id);
+    }
+    fullscreen = fs_; claudeRunning = run; emit();
+    greet = '';
   });
-  watcher.on('error', () => {});
+  watcher.on('error', () => { claudeRunning = true; emit(); }); // no probe: never hide Pip for a Claude we cannot see
 }
 
 // ---- menu ----

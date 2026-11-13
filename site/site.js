@@ -3,18 +3,24 @@ const $ = (id) => document.getElementById(id);
 const el = (tag, text, cls) => { const n = document.createElement(tag); if (text != null) n.textContent = text; if (cls) n.className = cls; return n; };
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const pick = { char: 'blob', skin: 'coral', acc: 'none' };
+const charOf = (id) => CHARS.find((c) => c.id === id) || CHARS[0];
 
-const SAY = {
+// ---- the corner pet: one pet for the whole page, standing where the app stands on your screen ----
+const buddy = $('buddy'), pet = $('pet'), say = $('say'), dots = $('dots');
+const LINES = {
   done: ['api-server is done', 'All 42 tests pass. Ready when you are.'],
   needs: ['docs-site needs you', 'Wants to use Bash'],
 };
-function speak(bubble, mood) {
-  const line = SAY[mood];
-  bubble.hidden = !line;
-  if (!line) return;
-  bubble.replaceChildren(el('b', line[0]), el('span', line[1]));
-  bubble.classList.remove('pop'); void bubble.offsetWidth; bubble.classList.add('pop');
+function speak(title, msg) {
+  say.hidden = !title;
+  if (!title) return;
+  say.replaceChildren(el('b', title), ...(msg ? [el('span', msg)] : []));
+  say.classList.remove('pop'); void say.offsetWidth; say.classList.add('pop');
 }
+function act(mood, title, msg) { PipPet.setMood(pet, mood); speak(title, msg); }
+const show = (mood) => act(mood, ...(LINES[mood] || []));
+// hello / bye arrive with the newer pet.js; older builds fall back to the petting squish
+const greet = (kind) => { if (PipPet.greet) PipPet.greet(pet, kind); else if (kind === 'hello') PipPet.pet(pet); };
 
 // ---- headline: split into words so each one rises on load ----
 const h1 = $('h1');
@@ -25,91 +31,101 @@ h1.replaceChildren(...h1.textContent.split(' ').flatMap((word, i) => {
   return [w, ' '];
 }));
 
-// ---- the page takes its colours from the pet you pick ----
+// ---- the page takes its colours from the pet you pick: ground from its accent, highlights from its body ----
 function theme() {
-  const p = palette(pick.skin), dark = p.ink !== '#261c2c', r = document.documentElement.style;
-  r.setProperty('--ground', mix(p.body, '#ffffff', dark ? 0.88 : 0.84));
-  r.setProperty('--ground-2', mix(p.body, '#ffffff', dark ? 0.74 : 0.66));
+  const p = palette(pick.skin), dark = p.ink !== '#261c2c', r = document.documentElement.style, a = p.accent || p.body;
+  r.setProperty('--ground', mix(a, '#ffffff', 0.82));
+  r.setProperty('--ground-2', mix(a, '#ffffff', 0.62));
   r.setProperty('--skin', p.body);
-  r.setProperty('--skin-dark', dark ? p.body : mix(p.body, '#2a1238', 0.34));
   r.setProperty('--on-skin', dark ? '#fff4de' : '#221a28');
   r.setProperty('--on-skin-text', dark ? '#221a28' : '#ffffff');
 }
 
-// ---- pets that follow the current pick ----
-const hero = $('hero-pet'), story = $('story-pet'), mini = $('mini-pet'), many = $('many-pet');
-const moodOf = (n) => n.querySelector('.pip')?.dataset.mood || 'idle';
-function drawPicked() {
-  for (const n of [hero, story, mini, many]) PipPet.mount(n, { ...pick, mood: moodOf(n) });
-  shelfPets.forEach((n, i) => { PipPet.mount(n, { char: CHARS[i].id, skin: pick.skin, acc: pick.acc, mood: CHARS[i].id === pick.char ? 'done' : 'idle' }); n.setAttribute('aria-pressed', CHARS[i].id === pick.char); });
-  const c = CHARS.find((c) => c.id === pick.char), name = $('cast-name');
+// ---- picker ----
+const shelf = $('shelf');
+const picks = CHARS.map((c) => {
+  const b = el('button', null, 'pick'), p = el('div', null, 'pet');
+  b.type = 'button'; p.setAttribute('aria-hidden', 'true'); b.append(p, el('span', c.name)); // the name under the picture is the label
+  b.addEventListener('click', () => { pick.char = c.id; draw(); PipPet.pet(pet); });
+  shelf.append(b);
+  return { b, p, c };
+});
+for (const s of SKINS) {
+  const b = el('button'); b.type = 'button'; b.dataset.id = s.id; b.style.background = s.body; b.setAttribute('aria-label', s.name); b.title = s.name;
+  b.addEventListener('click', () => { pick.skin = s.id; draw(); });
+  $('swatches').append(b);
+}
+for (const a of ACCS) {
+  const b = el('button', a.name); b.type = 'button'; b.dataset.id = a.id;
+  b.addEventListener('click', () => { pick.acc = a.id; draw(); });
+  $('chips').append(b);
+}
+{ // counts come from the data, so they stay right when characters are added
+  const fixed = CHARS.filter((c) => c.fixed).length, things = ACCS.filter((a) => a.id !== 'none').length;
+  const pets = ((CHARS.length - fixed) * SKINS.length + fixed) * ACCS.length;
+  $('combo').textContent = `${CHARS.length} characters, ${SKINS.length} colours and ${things} things to wear. That is ${pets.toLocaleString('en')} different pets, and this whole page follows the one you choose.`;
+}
+
+function draw() {
+  const c = charOf(pick.char), name = $('cast-name');
+  PipPet.mount(pet, { ...pick, mood: pet.querySelector('.pip')?.dataset.mood || 'idle' });
+  pet.setAttribute('aria-label', 'Pet ' + c.name);
+  for (const { b, p, c: k } of picks) { PipPet.mount(p, { char: k.id, skin: pick.skin, acc: pick.acc }); b.setAttribute('aria-pressed', k.id === pick.char); }
   if (name.textContent !== c.name) { name.textContent = c.name; name.classList.remove('swap'); void name.offsetWidth; name.classList.add('swap'); }
   $('cast-blurb').textContent = c.blurb;
-  $('colour-name').textContent = SKINS.find((s) => s.id === pick.skin).name;
+  // characters with their own colours keep them: the swatches then only recolour the page
+  $('colour-label').textContent = c.fixed ? 'Page colour' : 'Colour';
+  $('fixed-note').hidden = !c.fixed;
+  $('fixed-note').textContent = `${c.name} comes in its own colours, so the swatches only change the page.`;
+  $('colour-name').textContent = (SKINS.find((s) => s.id === pick.skin) || SKINS[0]).name;
   for (const b of $('swatches').children) b.setAttribute('aria-pressed', b.dataset.id === pick.skin);
   for (const b of $('chips').children) b.setAttribute('aria-pressed', b.dataset.id === pick.acc);
   theme();
 }
 
-// shelf, swatches, chips
-const shelf = $('shelf');
-const shelfPets = CHARS.map((c, i) => {
-  const b = el('button', null, 'pet');
-  b.setAttribute('aria-label', c.name); b.style.setProperty('--i', i);
-  b.addEventListener('click', () => { pick.char = c.id; drawPicked(); PipPet.pet(b); });
-  const slot = el('div', null, 'slot'); slot.append(b); shelf.append(slot);
-  return b;
+// ---- presence: three switches and one button that follow the same rules as the app ----
+const presence = $('presence'), switches = [...presence.querySelectorAll('.switch')];
+const sw = { app: true, term: true, full: false };
+let alertOn = false, byeT, alertT;
+function applyPresence(changed) {
+  const claude = sw.app || sw.term, there = alertOn || (claude && !sw.full), wasGone = buddy.classList.contains('gone');
+  presence.classList.toggle('full', sw.full);
+  $('finish').disabled = !claude;
+  clearTimeout(byeT);
+  if (there) {
+    buddy.classList.remove('gone');
+    show(alertOn ? 'done' : 'idle');
+    if (wasGone && (changed === 'app' || changed === 'term')) greet('hello');
+  } else if (!wasGone) {
+    show('idle');
+    // closing the last Claude gets a goodbye wave; fullscreen and a finished alert just duck out
+    if (changed === 'app' || changed === 'term') { greet('bye'); byeT = setTimeout(() => buddy.classList.add('gone'), PipPet.greet && !reduced ? 1500 : 200); }
+    else buddy.classList.add('gone');
+  }
+  $('presence-status').textContent = alertOn ? 'A session finished, so Pip is here to tell you.' + (sw.full ? ' Then it leaves again.' : '')
+    : !claude ? 'Nothing from Claude is open. Pip waved goodbye and left.'
+    : sw.full ? 'You are in fullscreen. Pip is out of the way.'
+    : 'Claude is open. Pip is on your desktop.';
+}
+function resetPresence() {
+  Object.assign(sw, { app: true, term: true, full: false });
+  alertOn = false; clearTimeout(byeT); clearTimeout(alertT);
+  for (const b of switches) b.setAttribute('aria-checked', sw[b.dataset.sw]);
+  buddy.classList.remove('gone');
+  applyPresence();
+}
+for (const b of switches) b.addEventListener('click', () => {
+  enter(presence);
+  sw[b.dataset.sw] = !sw[b.dataset.sw];
+  b.setAttribute('aria-checked', sw[b.dataset.sw]);
+  applyPresence(b.dataset.sw);
 });
-for (const s of SKINS) {
-  const b = el('button'); b.dataset.id = s.id; b.style.background = s.body; b.setAttribute('aria-label', s.name); b.title = s.name;
-  b.addEventListener('click', () => { pick.skin = s.id; drawPicked(); });
-  $('swatches').append(b);
-}
-for (const a of ACCS) {
-  const b = el('button', a.name); b.dataset.id = a.id;
-  b.addEventListener('click', () => { pick.acc = a.id; drawPicked(); });
-  $('chips').append(b);
-}
-
-// ---- hero mood preview: cycles on its own until you take over ----
-let auto = !reduced;
-function setHero(mood) {
-  PipPet.setMood(hero, mood);
-  for (const b of $('moods-ctl').children) b.setAttribute('aria-pressed', b.dataset.mood === mood);
-  speak($('hero-say'), mood);
-}
-$('moods-ctl').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { auto = false; setHero(b.dataset.mood); } });
-const order = ['working', 'done', 'working', 'needs', 'working', 'sleep'];
-let step = 0;
-setInterval(() => { if (auto && !document.hidden) setHero(order[++step % order.length]); }, 3600);
-
-// ---- scroll story: the pet changes mood as each statement reaches the middle of the screen ----
-const steps = [...document.querySelectorAll('.story-steps article')];
-function setStory(a) {
-  steps.forEach((s) => s.classList.toggle('active', s === a));
-  PipPet.setMood(story, a.dataset.mood);
-  speak($('story-say'), a.dataset.mood);
-}
-const storyIO = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) setStory(e.target); }, { rootMargin: '-48% 0px -48% 0px' });
-steps.forEach((s) => storyIO.observe(s));
-
-// ---- fullscreen demo ----
-const screenEl = $('screen');
-const SCENES = [
-  ['', 'idle', 'On your desktop, Pip keeps you company.', 3200],
-  ['full', 'idle', 'You go fullscreen. Pip steps out.', 4000],
-  ['full alert', 'done', 'A session finishes. Pip pops up to tell you.', 3600],
-  ['full', 'idle', 'Then leaves you to it.', 2600],
-];
-let scene = 0, progress = 0;
-(function play() {
-  const [cls, mood, text, ms] = SCENES[scene++ % SCENES.length];
-  screenEl.className = 'screen ' + cls;
-  PipPet.setMood(mini, mood);
-  $('phase').textContent = text;
-  if (!reduced) setTimeout(play, ms);
-})();
-setInterval(() => { progress = (progress + 0.4) % 100; screenEl.querySelector('.video').style.setProperty('--p', progress + '%'); }, 100);
+$('finish').addEventListener('click', () => {
+  enter(presence);
+  alertOn = true; applyPresence('alert');
+  clearTimeout(alertT);
+  alertT = setTimeout(() => { alertOn = false; applyPresence('alert'); }, 4200);
+});
 
 // ---- many sessions demo (sample data) ----
 const rows = [
@@ -127,29 +143,59 @@ function drawRows(changed) {
     row.append(el('i'), el('b', r.name), el('span', `${LABEL[r.state]}, ${r.t}`));
     return row;
   }));
-  $('many-dots').replaceChildren(...rows.map((r) => el('i', null, r.state)));
-  const now = changed == null ? 'working' : rows[changed].state;
-  PipPet.setMood(many, now);
+  dots.replaceChildren(...rows.map((r) => el('i', null, r.state)));
+  if (scene !== 'many') return;
+  const r = rows[changed];
+  if (!r || r.state === 'working') act('working'); else act(r.state, `${r.name} ${r.state === 'done' ? 'is done' : 'needs you'}`);
 }
-drawRows();
+
+// ---- scenes: whatever sits in the middle of the screen tells the corner pet what to do ----
+const tells = [...document.querySelectorAll('.tells article')];
+let scene = '', current = null;
+function enter(n) {
+  if (n === current) return;
+  if (scene === 'presence') resetPresence();
+  current = n; scene = n.dataset.scene;
+  buddy.dataset.size = scene === 'hero' || scene === 'cast' ? 'l' : '';
+  buddy.classList.toggle('out', scene === 'adopt');
+  dots.hidden = scene !== 'many';
+  tells.forEach((a) => a.classList.toggle('active', a === n));
+  if (scene === 'tell') show(n.dataset.mood);
+  else if (scene === 'presence') applyPresence();
+  else if (scene === 'many') drawRows();
+  else show(scene === 'how' ? 'sleep' : 'idle');
+}
+const sceneIO = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) enter(e.target); }, { rootMargin: '-45% 0px -45% 0px' });
+document.querySelectorAll('[data-scene]').forEach((n) => sceneIO.observe(n));
+for (const a of tells) a.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') enter(a); });
+
+// at the top of the page the pet runs through its moods on its own
+const order = ['working', 'done', 'working', 'needs', 'working', 'sleep'];
+let step = 0;
 if (!reduced) setInterval(() => {
   if (document.hidden) return;
-  const [i, state] = SCRIPT[beat++ % SCRIPT.length];
-  rows[i].state = state; rows[i].t = 'just now';
-  drawRows(i);
-}, 2600);
+  if (scene === 'hero') show(order[step++ % order.length]);
+  else if (scene === 'many') { const [i, state] = SCRIPT[beat++ % SCRIPT.length]; rows[i].state = state; rows[i].t = 'just now'; drawRows(i); }
+}, 3200);
 
-// ---- closing parade: every character, each in its own colour ----
-[0, 2, 10, 3, 1, 12, 9, 16].map((k) => CHARS[k]).forEach((c, i) => {
+// ---- closing parade: a line-up of characters, each in its own colour ----
+['blob', 'simba', 'zuck', 'david', 'lucy', 'geralt', 'kage', 'grim', 'titan', 'cat'].map((id) => CHARS.find((c) => c.id === id)).filter(Boolean).slice(0, 8).forEach((c, i) => {
   const n = el('div', null, 'pet'); n.style.setProperty('--i', i % 4);
   PipPet.mount(n, { char: c.id, skin: SKINS[(i * 3 + 5) % SKINS.length].id, acc: ACCS[(i * 2 + 1) % ACCS.length].id, mood: i % 3 === 0 ? 'done' : 'idle' });
   $('parade').append(n);
 });
 
-drawPicked();
-setHero('working');
+draw();
+drawRows();
+if (scrollY < innerHeight / 2) enter(document.querySelector('.hero')); // the observer reports late on a cold load, and the hello below needs the scene
 
-// ---- every pet watches the cursor and likes being clicked ----
+// arrive the way the app does when Claude opens: pop up, wave, say hello
+setTimeout(() => {
+  buddy.classList.remove('gone');
+  setTimeout(() => { if (scene !== 'hero') return; greet('hello'); speak('Hello.', 'Claude is open, so here I am.'); }, 450);
+}, 300);
+
+// ---- every pet watches the cursor; the corner pet likes being clicked ----
 const pets = [...document.querySelectorAll('.pet')];
 addEventListener('pointermove', (e) => {
   const c = (v) => Math.max(-1, Math.min(1, v));
@@ -159,16 +205,8 @@ addEventListener('pointermove', (e) => {
     PipPet.look(n, c((e.clientX - r.left - r.width / 2) / 340), c((e.clientY - r.top - r.height / 2) / 340));
   }
 }, { passive: true });
-for (const n of [hero, story]) n.addEventListener('click', () => PipPet.pet(n));
+pet.addEventListener('click', () => { PipPet.pet(pet); });
 
-// pause pets that are off screen, reveal headings and the shelf once
+// pause pets that are off screen
 const vis = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle('offscreen', !e.isIntersecting)), { rootMargin: '120px' });
 pets.forEach((n) => vis.observe(n));
-const once = new IntersectionObserver((es) => es.forEach((e) => {
-  if (!e.isIntersecting) return;
-  e.target.classList.add('on'); once.unobserve(e.target);
-  if (e.target === shelf) setTimeout(() => shelf.classList.remove('intro', 'on'), 1300);
-}), { threshold: 0.2 });
-shelf.classList.add('intro');
-document.querySelectorAll('.rise').forEach((n) => once.observe(n));
-once.observe(shelf);

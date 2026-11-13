@@ -1,6 +1,6 @@
 {
   "name": "pip-pet",
-  "version": "1.4.1",
+  "version": "2.0.0",
   "description": "A tiny desk pet that watches your Claude Code sessions",
   "author": "Pip",
   "license": "MIT",
@@ -8,7 +8,7 @@
   "scripts": {
     "start": "electron .",
     "test": "node --test test.js",
-    "icon": "node make-icon.js",
+    "icon": "electron make-icon.js",
     "dist": "electron-builder --win nsis"
   },
   "build": {
