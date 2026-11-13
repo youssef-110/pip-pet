@@ -423,6 +423,12 @@
   const ORDER = ['blob', 'simba', 'zuck', 'david', 'lucy', 'geralt', 'imp', 'classic'];
   CHARS.sort((a, b) => (ORDER.indexOf(a.id) + 1 || 99) - (ORDER.indexOf(b.id) + 1 || 99));
 
+  // Each character's own colour: what it wears until someone picks another.
+  const OWN = { imp: 'red', spark: 'clay', nyx: 'butter', kage: 'midnight', titan: 'sky', vale: 'white', orbit: 'mint', grim: 'black', blaze: 'red', cat: 'tangerine', ghost: 'matcha',
+    robot: 'blueberry', axo: 'bubblegum', bear: 'butter', bunny: 'sky', penguin: 'midnight', duck: 'butter', capy: 'clay', shiba: 'tangerine', octo: 'red', sage: 'blueberry',
+    simba: 'clay', zuck: 'sky', david: 'butter', lucy: 'bubblegum', geralt: 'midnight' };
+  for (const c of CHARS) c.skin = OWN[c.id] || 'coral';
+
   function accessory(id, c, u) {
     const t = c.top, { ey = 108, dx = 22 } = c.face, hw = c.hw;
     switch (id) {

@@ -4,6 +4,9 @@ const el = (tag, text, cls) => { const n = document.createElement(tag); if (text
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const byId = (id) => CHARS.find((c) => c.id === id);
 const pick = { char: 'blob', skin: 'coral', acc: 'none' };
+// Every character shows in its own colour until you pick it and choose another.
+const chosen = {};
+const skinOf = (id) => chosen[id] || byId(id).skin;
 
 // ---- the page has one accent: the colour of the pet you pick ----
 function theme() {
@@ -21,8 +24,8 @@ const moodOf = (n) => n.querySelector('.pip')?.dataset.mood || 'idle';
 function draw() {
   for (const n of [hero, presence, cast, many]) PipPet.mount(n, { ...pick, mood: moodOf(n) });
   for (const n of tells) PipPet.mount(n, { ...pick, mood: n.dataset.mood });
-  tiles.forEach((b, i) => b.setAttribute('aria-pressed', CHARS[i].id === pick.char));
-  for (const b of $('marks').children) b.setAttribute('aria-pressed', b.dataset.id === pick.char);
+  tiles.forEach((b, i) => { const me = CHARS[i].id === pick.char; b.setAttribute('aria-pressed', me); if (me) PipPet.skin(b.firstChild, pick.skin); });
+  for (const b of $('marks').children) { const me = b.dataset.id === pick.char; b.setAttribute('aria-pressed', me); if (me) PipPet.skin(b, pick.skin); }
   const c = byId(pick.char), name = $('cast-name');
   if (name.textContent !== c.name) { name.textContent = c.name; name.classList.remove('swap'); void name.offsetWidth; name.classList.add('swap'); }
   $('cast-blurb').textContent = c.blurb;
@@ -36,10 +39,10 @@ function draw() {
 }
 
 // character tiles (all), avatar marks (the drawn cast), swatches, chips
-const choose = (id) => { pick.char = id; draw(); PipPet.pet(cast); };
+const choose = (id, petted = cast) => { pick.char = id; pick.skin = skinOf(id); draw(); PipPet.pet(petted); };
 const tiles = CHARS.map((c) => {
   const b = el('button', null, 'tile'), p = el('div', null, 'pet');
-  PipPet.mount(p, { char: c.id, skin: 'coral' });
+  PipPet.mount(p, { char: c.id, skin: c.skin });
   b.append(p, el('span', c.name));
   b.addEventListener('click', () => choose(c.id));
   $('tiles').append(b);
@@ -51,13 +54,13 @@ const RINGS = ['#097fe8', '#f64932', '#ffb110', '#62aef0'];
   b.dataset.id = c.id; b.setAttribute('aria-label', c.name); b.title = c.name;
   b.style.setProperty('--ring', RINGS[i % RINGS.length]);
   if (c.id === 'blob') b.style.setProperty('--crop', '-14%');
-  PipPet.mount(b, { char: c.id, skin: 'coral' });
-  b.addEventListener('click', () => { pick.char = c.id; draw(); PipPet.pet(hero); });
+  PipPet.mount(b, { char: c.id, skin: c.skin });
+  b.addEventListener('click', () => choose(c.id, hero));
   $('marks').append(b);
 });
 for (const s of SKINS) {
   const b = el('button'); b.dataset.id = s.id; b.style.setProperty('--c', s.body); b.setAttribute('aria-label', s.name); b.title = s.name;
-  b.addEventListener('click', () => { pick.skin = s.id; draw(); });
+  b.addEventListener('click', () => { chosen[pick.char] = pick.skin = s.id; draw(); });
   $('swatches').append(b);
 }
 for (const a of ACCS) {
@@ -146,10 +149,10 @@ if (!reduced) setInterval(() => {
   drawRows(i);
 }, 2600);
 
-// ---- closing line-up, each in its own colour ----
+// ---- closing line-up ----
 ['blob', 'simba', 'zuck', 'david', 'lucy', 'geralt', 'kage', 'duck'].map(byId).filter(Boolean).forEach((c, i) => {
   const n = el('div', null, 'pet');
-  PipPet.mount(n, { char: c.id, skin: SKINS[(i * 3 + 9) % SKINS.length].id, acc: ACCS[(i * 2 + 1) % ACCS.length].id, mood: i % 3 === 0 ? 'done' : 'idle' });
+  PipPet.mount(n, { char: c.id, skin: c.skin, acc: ACCS[(i * 2 + 1) % ACCS.length].id, mood: i % 3 === 0 ? 'done' : 'idle' });
   $('parade').append(n);
 });
 
