@@ -4,143 +4,149 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pip, the desk pet for Claude Code</title>
-<meta name="description" content="Pip stands in the corner of your screen, watches every Claude Code session you have running, and tells you when one is done or needs you. Free and open source, for Windows.">
+<meta name="description" content="Pip sits on your desktop, watches every Claude Code session you have running, and tells you when one is done or needs you. Free and open source, for Windows.">
 <meta property="og:title" content="Pip, the desk pet for Claude Code">
 <meta property="og:description" content="A small animated pet that tells you when Claude is done or needs you. Free and open source, for Windows.">
 <meta property="og:image" content="https://pip-pet.vercel.app/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preload" href="fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="pet.css">
 <link rel="stylesheet" href="site.css">
-<script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
 <a class="skip" href="#top">Skip to content</a>
 
-<header class="shell nav">
-  <a class="mark" href="#top" aria-label="Pip home">
-    <img src="favicon.svg" alt="" width="34" height="34">
-    <span>Pip</span>
-  </a>
-  <nav aria-label="Main">
-    <a href="#moods">What it does</a>
-    <a href="#characters">Characters</a>
-    <a href="#how">Setup</a>
-    <a href="https://github.com/youssef-110/pip-pet">GitHub</a>
-  </nav>
-  <a class="btn small" href="https://github.com/youssef-110/pip-pet/releases/latest/download/Pip-Setup.exe">Download</a>
+<header class="nav">
+  <div class="shell nav-in">
+    <a class="brand" href="#top" aria-label="Pip home"><img src="favicon.svg" alt="" width="28" height="28"><span>Pip</span></a>
+    <nav aria-label="Main">
+      <a href="#tells">What it does</a>
+      <a href="#characters">Characters</a>
+      <a href="#how">Setup</a>
+      <a href="https://github.com/youssef-110/pip-pet">GitHub</a>
+    </nav>
+    <a class="btn small" href="https://github.com/youssef-110/pip-pet/releases/latest/download/Pip-Setup.exe">Download</a>
+  </div>
 </header>
 
 <main id="top">
 
-  <section class="shell hero" data-scene="hero">
-    <h1 id="h1">The desk pet for Claude Code.</h1>
-    <div class="hero-copy">
-      <p class="lede">Pip stands in the corner of your screen, the same way it is standing in the corner of this page. It watches every Claude Code session you have open and tells you the moment one is done, or when Claude is waiting on you.</p>
-      <div class="cta">
-        <a class="btn" href="https://github.com/youssef-110/pip-pet/releases/latest/download/Pip-Setup.exe">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v9M4 7.5 8 11.5l4-4M3 14h10"/></svg>Download for Windows</a>
-        <a class="quiet" href="#characters">Pick a character</a>
+  <section class="shell hero">
+    <div class="marks" id="marks" role="group" aria-label="Pick a character"></div>
+    <h1>The desk pet for <span class="pill">Claude Code</span></h1>
+    <p class="lede">Pip sits in the corner of your screen and watches every Claude Code session you have open. It tells you the moment one is done, or when Claude is waiting on you.</p>
+    <div class="cta">
+      <a class="btn" href="https://github.com/youssef-110/pip-pet/releases/latest/download/Pip-Setup.exe">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v9M4 7.5 8 11.5l4-4M3 14h10"/></svg>Download for Windows</a>
+      <a class="btn ghost" href="#characters">Pick a character</a>
+    </div>
+    <p class="fine">Free and open source. Windows 10 and 11. Nothing leaves your machine.</p>
+
+    <div class="mock">
+      <div class="mock-bar" aria-hidden="true"><i></i><i></i><i></i><span>api-server: claude</span></div>
+      <div class="mock-body">
+        <pre class="term" id="term" aria-hidden="true"></pre>
+        <div class="corner">
+          <div class="say" id="say" aria-live="polite" hidden></div>
+          <button class="pet" id="hero-pet" aria-label="Pet Pip"></button>
+          <div class="dots" id="hero-dots" aria-hidden="true"></div>
+        </div>
       </div>
-      <p class="fine">Free and open source. Windows 10 and 11. Nothing leaves your machine.</p>
+      <div class="seg" id="moods" role="group" aria-label="Show a mood">
+        <button data-mood="working">Working</button>
+        <button data-mood="done">Done</button>
+        <button data-mood="needs">Needs you</button>
+        <button data-mood="sleep">Asleep</button>
+      </div>
     </div>
   </section>
 
-  <section class="shell lane story" id="moods">
+  <section class="shell block" id="tells">
     <h2>Three things Pip tells you</h2>
-    <div class="tells">
-      <article data-scene="tell" data-mood="working">
+    <p class="sub">One glance at the corner of your screen, and you know whether to keep waiting.</p>
+    <div class="cards">
+      <article class="card">
+        <div class="stage"><div class="pet" data-mood="working"></div></div>
         <h3>Still on it</h3>
-        <p>While Claude is thinking or running tools, Pip opens a tiny laptop and types along. One glance at the corner of your screen and you know not to interrupt.</p>
+        <p>While Claude is thinking or running tools, Pip opens a tiny laptop and types along. You know not to interrupt.</p>
       </article>
-      <article data-scene="tell" data-mood="done">
+      <article class="card">
+        <div class="stage"><div class="pet" data-mood="done"></div></div>
         <h3>All done</h3>
-        <p>The second a session finishes, Pip hops, makes a soft sound, and shows which project it was along with the last line Claude wrote.</p>
+        <p>The second a session finishes, Pip hops, plays a soft chime and shows which project it was, with the last line Claude wrote.</p>
       </article>
-      <article data-scene="tell" data-mood="needs">
+      <article class="card">
+        <div class="stage"><div class="pet" data-mood="needs"></div></div>
         <h3>Come here</h3>
-        <p>A permission prompt, or a question only you can answer. Pip waves and keeps waving until you come back, so a session never sits for an hour waiting on a yes.</p>
+        <p>A permission prompt, or a question only you can answer. Pip waves until you come back, so a session never sits idle for an hour.</p>
       </article>
     </div>
   </section>
 
-  <section class="presence" id="presence" data-scene="presence">
-    <div class="shell lane">
+  <section class="shell block split" id="presence">
+    <div>
       <h2>It turns up when Claude does</h2>
-      <div class="presence-grid">
-        <div class="prose">
-          <p>Open the Claude desktop app, or start <code>claude</code> in a terminal, and Pip turns up and waves. Close the last one and it waves goodbye and leaves.</p>
-          <p>Go fullscreen for a film, a game or a call and it ducks out of sight, no goodbye needed. It comes back over fullscreen for two reasons only: a session finished, or Claude is waiting on you.</p>
-          <p>These switches follow the same rules as the app. Flip them and watch the corner.</p>
-        </div>
-        <div class="rig" role="group" aria-label="Try the rules">
-          <div class="switch-row"><span id="l-app">Claude desktop app is open</span><button class="switch" role="switch" aria-checked="true" aria-labelledby="l-app" data-sw="app"></button></div>
-          <div class="switch-row"><span id="l-term"><code>claude</code> is running in a terminal</span><button class="switch" role="switch" aria-checked="true" aria-labelledby="l-term" data-sw="term"></button></div>
-          <div class="switch-row"><span id="l-full">Something is fullscreen</span><button class="switch" role="switch" aria-checked="false" aria-labelledby="l-full" data-sw="full"></button></div>
-          <div class="rig-foot">
-            <button class="btn small ghost" id="finish" type="button">Finish a session</button>
-            <p class="status" id="presence-status" aria-live="polite"></p>
-          </div>
-        </div>
+      <p class="sub">Open the Claude desktop app, or start <code>claude</code> in a terminal, and Pip pops up and waves. Close the last one and it waves goodbye and leaves.</p>
+      <p>Go fullscreen for a film, a game or a call and it ducks out of sight. It comes back over fullscreen for two reasons only: a session finished, or Claude is waiting on you.</p>
+    </div>
+    <div class="card demo">
+      <div class="desk" id="desk"><div class="pet" id="presence-pet"></div></div>
+      <div class="switch-row"><span>Claude desktop app is open</span><button class="switch" id="sw-app" role="switch" aria-checked="true" aria-label="Claude desktop app is open"></button></div>
+      <div class="switch-row"><span><code>claude</code> is running in a terminal</span><button class="switch" id="sw-term" role="switch" aria-checked="false" aria-label="claude is running in a terminal"></button></div>
+      <div class="switch-row"><span>Something is fullscreen</span><button class="switch" id="sw-full" role="switch" aria-checked="false" aria-label="Something is fullscreen"></button></div>
+      <div class="demo-foot"><button class="btn outline" id="finish">Finish a session</button><p id="presence-status" aria-live="polite"></p></div>
+    </div>
+  </section>
+
+  <section class="shell block" id="characters">
+    <h2>Pick who stands on your desk</h2>
+    <p class="sub" id="combo"></p>
+    <div class="tiles" id="tiles" role="group" aria-label="Character"></div>
+    <div class="card picked">
+      <div class="stage big"><button class="pet" id="cast-pet" aria-label="Pet this character"></button></div>
+      <div class="picked-info">
+        <h3 id="cast-name"></h3>
+        <p id="cast-blurb"></p>
+        <p class="label" id="l-colour"><span id="colour-label">Colour</span> <span id="colour-name"></span></p>
+        <div class="swatches" id="swatches" role="group" aria-labelledby="l-colour"></div>
+        <p class="note" id="fixed-note" hidden></p>
+        <p class="label" id="l-acc">Wearing</p>
+        <div class="chips" id="chips" role="group" aria-labelledby="l-acc"></div>
       </div>
     </div>
   </section>
 
-  <section class="cast" id="characters" data-scene="cast">
-    <div class="shell lane">
-      <h2>Pick who stands on your desk</h2>
-      <div class="shelf" id="shelf" role="group" aria-label="Character"></div>
-      <div class="cast-grid">
-        <div>
-          <h3 class="cast-name" id="cast-name"></h3>
-          <p class="cast-blurb" id="cast-blurb"></p>
-        </div>
-        <div class="controls">
-          <div>
-            <p class="label" id="l-colour"><b id="colour-label">Colour</b> <span id="colour-name"></span></p>
-            <div class="swatches" id="swatches" role="group" aria-labelledby="l-colour"></div>
-            <p class="note" id="fixed-note" hidden></p>
-          </div>
-          <div>
-            <p class="label" id="l-acc"><b>Wearing</b></p>
-            <div class="chips" id="chips" role="group" aria-labelledby="l-acc"></div>
-          </div>
-          <p class="combo" id="combo"></p>
-        </div>
-      </div>
+  <section class="shell block split">
+    <div>
+      <h2>Every session, one glance</h2>
+      <p class="sub">Run Claude in five terminals across five projects. Each session gets a dot under Pip.</p>
+      <p>Hover the pet and you see what every one of them is doing. This panel is a live demo of that list.</p>
+    </div>
+    <div class="card demo">
+      <div class="rows" id="rows"></div>
+      <div class="many-pet"><div class="pet" id="many-pet"></div><div class="dots" id="many-dots" aria-hidden="true"></div></div>
     </div>
   </section>
 
-  <section class="shell lane many" data-scene="many">
-    <h2>Every session, one glance</h2>
-    <div class="many-grid">
-      <div class="prose">
-        <p>Run Claude in five terminals across five projects. Each session gets a dot under Pip. Hover and you see what every one of them is doing.</p>
-        <p>This list is sample data running on a loop. Watch the sessions change, and Pip react in the corner.</p>
-      </div>
-      <div class="panel" id="panel"></div>
-    </div>
-  </section>
-
-  <section class="shell lane how" id="how" data-scene="how">
+  <section class="shell block" id="how">
     <h2>Set up once, then forget it is there</h2>
     <ol class="steps">
-      <li><h3>Install Pip</h3><p>One installer. Pip settles into the corner of your screen and the system tray, and starts with Windows.</p></li>
-      <li><h3>It connects itself</h3><p>Pip adds a few hooks to <code>~/.claude/settings.json</code>. Events go to <code>127.0.0.1</code> only. Remove them from the menu whenever you like.</p></li>
+      <li><h3>Install Pip</h3><p>One installer. Pip settles into the system tray and starts with Windows.</p></li>
+      <li><h3>It connects itself</h3><p>Pip adds a few hooks to <code>~/.claude/settings.json</code>. Events go to <code>127.0.0.1</code> only. Remove them from Settings whenever you like.</p></li>
       <li><h3>Run Claude anywhere</h3><p>Any terminal, any project, as many sessions as you want. Open Pip from the tray to change character, colour or outfit.</p></li>
     </ol>
     <p class="both">Works the same on a Claude subscription and on an API key, because Pip listens to Claude Code itself, not to your account.</p>
   </section>
 
-  <section class="adopt" id="download" data-scene="adopt">
-    <div class="shell">
+  <section class="shell block" id="download">
+    <div class="adopt">
       <h2>Go on. Adopt one.</h2>
       <a class="btn" href="https://github.com/youssef-110/pip-pet/releases/latest/download/Pip-Setup.exe">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v9M4 7.5 8 11.5l4-4M3 14h10"/></svg>Download for Windows</a>
       <p class="fine">Unsigned build, so Windows SmartScreen will ask once. The source is on <a href="https://github.com/youssef-110/pip-pet">GitHub</a>.</p>
+      <div class="parade" id="parade" aria-hidden="true"></div>
     </div>
-    <div class="parade" id="parade" aria-hidden="true"></div>
   </section>
 </main>
 
@@ -150,13 +156,6 @@
     <a href="https://github.com/youssef-110/pip-pet">Source on GitHub</a>
   </div>
 </footer>
-
-<!-- The pet that lives in the corner of the page, the way the app lives in the corner of your screen. -->
-<div class="buddy gone" id="buddy">
-  <div class="say" id="say" aria-hidden="true" hidden></div>
-  <button class="pet" id="pet" type="button" aria-label="Pet Pip"></button>
-  <div class="dots" id="dots" aria-hidden="true" hidden></div>
-</div>
 
 <script src="pet.js"></script>
 <script src="site.js"></script>
